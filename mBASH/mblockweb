@@ -1,0 +1,3 @@
+
+sudo echo "127.0.0.1 http://$1" >> /etc/hosts
+sudo echo "127.0.0.1 https://$1" >> /etc/hosts

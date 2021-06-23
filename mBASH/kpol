@@ -1,0 +1,7 @@
+echo "k-points along high symmetry lines
+$1  ! 51 pts
+Line-mode
+Reciprocal lattice
+
+0.0   0.0   0.0   ! G
+0.5   0.0   0.0   ! K" > KPOINTS

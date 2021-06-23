@@ -1,0 +1,14 @@
+#!/bin/bash --noprofile
+
+if [ -z "$1" ]; then
+file=relax.out
+else
+file=$1
+fi
+
+
+/home/mt/Dropbox/bin/programs/xcrysden-1.5.53-bin-semishared/scripts/pwo2xsf.sh -lc $file > CONTCAR.xsf
+cat CONTCAR.xsf
+echo check if it is correct !!!
+
+

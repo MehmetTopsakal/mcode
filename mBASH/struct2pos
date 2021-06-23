@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+
+file=$1 
+newfile=`echo $file | awk -F "." '{print $1}'`
+
+ntype1=`awk "NR>4" $file | awk '{print $1 }' | grep 1 | wc -l`
+ntype2=`awk "NR>4" $file | awk '{print $1 }' | grep 2 | wc -l`
+ntype3=`awk "NR>4" $file | awk '{print $1 }' | grep 3 | wc -l`
+ntype4=`awk "NR>4" $file | awk '{print $1 }' | grep 4 | wc -l`
+ntype5=`awk "NR>4" $file | awk '{print $1 }' | grep 5 | wc -l`
+ntype6=`awk "NR>4" $file | awk '{print $1 }' | grep 6 | wc -l`
+ntype7=`awk "NR>4" $file | awk '{print $1 }' | grep 7 | wc -l`
+ntype8=`awk "NR>4" $file | awk '{print $1 }' | grep 8 | wc -l`
+ntype9=`awk "NR>4" $file | awk '{print $1 }' | grep 9 | wc -l`
+
+echo "system"  > $newfile.POSCAR 
+echo "1.0000" >> $newfile.POSCAR 
+awk "NR<4" $file >> $newfile.POSCAR 
+echo `ls -l *.psf | awk '{print $8}' | cut -c 1` >> $newfile.POSCAR
+#echo "$ntype1 $ntype2 $ntype3 $ntype4 $ntype5 $ntype6 $ntype7 $ntype8 $ntype9" >> $newfile.POSCAR
+echo "$ntype1 $ntype2" >> $newfile.POSCAR
+echo "D" >> $newfile.POSCAR
+
+awk "NR>4" $file | awk '{print $3" "$4" "$5 }' >> $newfile.POSCAR
+
+
+

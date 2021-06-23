@@ -1,0 +1,41 @@
+n_electrons=`awk "NR==6" EIGENVAL | awk '{ print $1 }'`
+n_kpoints=`awk "NR==6" EIGENVAL   | awk '{ print $2 }'`
+n_bands=`awk "NR==6" EIGENVAL   | awk '{ print $3 }'`
+
+valance=`echo $n_electrons | awk '{print (8+$1/2) }'`
+conductance=`echo $n_electrons | awk '{print (9+$1/2) }'`
+
+> valance_energies
+> conductance_energies
+counter=1
+
+while [ "$counter" -le $n_kpoints ]
+
+do
+
+ val=`awk -v NRV=$valance "NR==NRV" EIGENVAL | awk '{ print $2 }'`
+cond=`awk -v NRV=$conductance "NR==NRV" EIGENVAL | awk '{ print $2 }'`
+
+	echo $val  | awk '{print ($1+100) }' >> valance_energies
+	echo $cond | awk '{print ($1+100) }' >> conductance_energies
+
+let valance=valance+$n_bands+2
+let conductance=conductance+$n_bands+2
+let counter+=1
+
+done
+
+sort  -nr valance_energies > valance_energies-s
+sort -n conductance_energies > conductance_energies-s
+
+maxvalance=`awk "NR==1" valance_energies-s`
+minconductance=`awk "NR==1" conductance_energies-s`
+
+EGAP=`echo $minconductance $maxvalance | awk '{print ($1-$2) }'`
+
+# echo "  $EGAP" >> EGAP_is_$EGAP
+echo "  $EGAP"
+
+rm -f valance_energies conductance_energies valance_energies-s conductance_energies-s
+
+

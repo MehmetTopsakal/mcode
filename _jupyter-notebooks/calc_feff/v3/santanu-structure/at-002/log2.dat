@@ -1,0 +1,11 @@
+Calculating cross-section and phases ...
+    absorption cross section
+    phase shifts for unique potential    0
+    phase shifts for unique potential    1
+    phase shifts for unique potential    2
+    phase shifts for unique potential    3
+      Phase shift calculation is accurate to k=17
+      See FEFF document to increase the range.
+    phase shifts for unique potential    4
+Done with module: cross-section and phases (XSPH).
+

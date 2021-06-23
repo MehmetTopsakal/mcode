@@ -1,0 +1,16 @@
+#!/bin/bash --noprofile
+
+file=$1
+time=$2
+
+if [ -z "$1" ]; then
+echo 'USAGE = mconvert $FILE $TIME' 
+exit
+fi
+
+if [ -z "$2" ]; then
+time=150
+fi
+
+convert -delay $time ./*/$1.png $1s.gif
+

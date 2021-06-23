@@ -1,0 +1,21 @@
+
+#echo $1 | awk -F "/" '{ for (i = 2; i <= NF; i++) printf("%s.", $i ) }'
+
+while :
+do
+if [ -z "$1" ]; then
+echo "Rename edilecek seyi girsene"
+read rename
+
+pdf=`echo $rename | awk '{ for (i = 1; i <= NF; i++) printf("%s_", $i ) }'`
+echo `echo $pdf | sed 's/:/_/' | sed 's/;/_/' | sed 's/,/_/'`.pid$RANDOM.pdf
+
+
+else 
+pdf=`echo $1 | awk '{ for (i = 1; i <= NF; i++) printf("%s_", $i ) }'`
+echo `echo $pdf | sed 's/:/_/' | sed 's/;/_/' | sed 's/,/_/'`.pid$RANDOM.pdf
+
+
+fi
+
+done

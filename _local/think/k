@@ -1,0 +1,27 @@
+rm -f $HOME/.sshagent.conf
+ssh-agent > "$HOME/.sshagent.conf"
+ssh-add $HOME/.ssh/key1/id_rsa
+
+
+# #====================================================== 
+# if [[ -e "$HOME/.sshagent.conf" ]]; then
+#         . "$HOME/.sshagent.conf"
+# fi
+# 
+# if `ps --process ${SSH_AGENT_PID}>/dev/null`;
+#         then true;
+# else
+# #       ssh-agent >| $HOME/.sshagent.conf
+#         ssh-agent > "$HOME/.sshagent.conf"
+#         . "$HOME/.sshagent.conf"
+#         ssh-add ~/.ssh/id_rsa
+# fi
+
+
+# if NOT using .ssh/config
+ssh -vA -Y -i $HOME/.ssh/key1/id_rsa mtopsakal@login.newyork.kbase.us
+
+# if using .ssh/config
+#ssh -vA  mtopsakal@login.newyork.kbase.us
+
+

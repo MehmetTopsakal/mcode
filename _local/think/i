@@ -1,0 +1,4 @@
+
+
+ssh-add ~/.ssh/key2/id_rsa
+ssh -A -i $HOME/.ssh/key2/id_rsa mtopsakal@ssh02.sdcc.bnl.gov

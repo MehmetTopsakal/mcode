@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# NOTE : USAGE help
+if [ -z "$1" ]; then
+echo ".
+.
+USAGE: msupercell \$FILE \$Sx \$Sy \$Sz
+where  \$FILE  is the POSCAR file and \$Sx \$Sy \$Sz are supercell lengths....
+.
+.
+" 
+exit
+fi
+ 

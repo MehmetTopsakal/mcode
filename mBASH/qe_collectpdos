@@ -1,0 +1,178 @@
+#!/bin/bash
+
+pdosout="pdos.out"
+
+grep "state #" $pdosout | grep 'm= 1' > .states.tmp1
+
+natom=`tail -n 1 .states.tmp1 | awk '{print $5}'`
+nedos=`awk "NR>1" pwscf.pdos_tot  | wc -l`
+nstate=`cat .states.tmp1 | wc -l`
+nspin=`cat pwscf.pdos_tot | grep dosup | wc -l`
+
+
+cat .states.tmp1 | cut -c 23-26,39-41,44-45 | awk -F = '{print $1"  "$2}' | awk  '{print $1"  "$3"  "$2}' > .states.tmp2
+
+
+echo $natom $nedos $nspin $nstate > pdos.dos
+cat .states.tmp2 | awk '{print $1"  "$2}' >> pdos.dos
+awk "NR>1" pwscf.pdos_tot >> pdos.dos
+
+
+
+size=`cat .states.tmp2 |  wc -l`
+for i in `seq 1 $size`
+do
+
+atom=`awk "NR==$i" .states.tmp2 | awk '{print$1}'`
+state=`awk "NR==$i" .states.tmp2 | awk '{print$2}'`
+wfc=`awk "NR==$i" .states.tmp2 | awk '{print$3}'`
+
+if [ $state = 0 ]
+then
+orb=s
+fi
+
+if [ $state = 1 ]
+then
+orb=p
+fi
+
+if [ $state = 2 ]
+then
+orb=d
+fi
+
+if [ $state = 3 ]
+then
+orb=f
+fi
+
+
+awk "NR>1" pwscf.pdos_atm\#$atom\(*\)_wfc\#$wfc\($orb\) >> pdos.dos
+echo  pwscf.pdos_atm\#$atom\(*\)_wfc\#*\($orb\) 
+done
+
+
+
+rm .states.tmp1 .states.tmp2
+
+if [ "$1" = "r" ]; then rm -rf pdos.out pwscf.pdos_atm*  ; fi
+
+
+
+
+
+
+# 
+# mreplace .states.tmp ")" " )"
+# mreplace .states.tmp "(" "( "
+# 
+# mreplace .states.tmp " l=0 m= 1 " s
+# mreplace .states.tmp " l=1 m= 1 " p
+# mreplace .states.tmp " l=2 m= 1 " d
+# mreplace .states.tmp " l=3 m= 1 " f
+# 
+# cat .states.tmp | awk "NF==11" > .states.tmp2
+# 
+# size=`cat .states.tmp2 |  wc -l`
+# 
+# > .states.tmp3
+# for s in `seq 1 $size`
+# do
+# atn=`awk "NR==$s" .states.tmp2  | cut -c 23-26 | awk '{print $1}'`
+# wfn=`awk "NR==$s" .states.tmp2  | cut -c 42`
+# label=`awk "NR==$s" .states.tmp2  | cut -c 29-34 | awk '{print $1}'`
+# stn=`awk "NR==$s" .states.tmp2  | cut -c 45`
+# 
+# awk "NR>1" pwscf.pdos_atm#$atn\($label\)_wfc#$wfn\($stn\) >> .states.tmp3
+# #echo $i `du -h .states.tmp3` `tail -n 1 .states.tmp3` `cat .states.tmp3 | wc -l`
+# done
+# 
+# mreplace .states.tmp2 "(s)"  "( 0 )" 
+# mreplace .states.tmp2 "(p)"  "( 1 )" 
+# mreplace .states.tmp2 "(d)"  "( 2 )" 
+# mreplace .states.tmp2 "(f)"  "( 3 )" 
+# 
+# 
+# natom=`tail -n 1 .states.tmp2 | awk '{print $5}'`
+# nedos=`awk "NR>1" pwscf.pdos_tot  | wc -l`
+# nstate=`cat .states.tmp2 | wc -l`
+# nspin=`cat pwscf.pdos_tot | grep dosup | wc -l`
+# echo $natom $nedos $nspin $nstate > pdos.dos
+# awk '{print$5"  "$12}' .states.tmp2 >> pdos.dos
+# awk "NR>1" pwscf.pdos_tot >> pdos.dos
+# cat .states.tmp3 >> pdos.dos
+# 
+# rm .states.tmp .states.tmp2 .states.tmp3
+# 
+# if [ "$1" = "r" ]; then rm -rf pwscf.pdos_atm* ; fi
+
+# 
+# 
+# 
+# 
+# 
+# 
+# # collect "s"
+# > dos_s.dat
+# 
+# size=`grep "\(l=0 m= 1\)" .states.tmp | wc -l`
+# for s in `seq 1 $size`
+# do
+# atn=`grep "\(l=0 m= 1\)" .states.tmp | awk "NR==$s" | cut -c 26`
+# wfn=`grep "\(l=0 m= 1\)" .states.tmp | awk "NR==$s" | cut -c 40`
+# awk "NR>1" pwscf.pdos_atm#$atn*$wfn\(s\) >> dos_s.dat
+# done
+# 
+# # collect "s"
+# > dos_p.dat
+# 
+# size=`grep "\(l=1 m= 1\)" .states.tmp | wc -l`
+# for p in `seq 1 $size`
+# do
+# atn=`grep "\(l=1 m= 1\)" .states.tmp | awk "NR==$p" | cut -c 26`
+# wfn=`grep "\(l=1 m= 1\)" .states.tmp | awk "NR==$p" | cut -c 40`
+# awk "NR>1" pwscf.pdos_atm#$atn*$wfn\(p\) >> dos_p.dat
+# done
+# 
+# # collect "s"
+# > dos_d.dat
+# 
+# size=`grep "\(l=2 m= 1\)" .states.tmp | wc -l`
+# for d in `seq 1 $size`
+# do
+# atn=`grep "\(l=2 m= 1\)" .states.tmp | awk "NR==$p" | cut -c 26`
+# wfn=`grep "\(l=2 m= 1\)" .states.tmp | awk "NR==$p" | cut -c 40`
+# awk "NR>1" pwscf.pdos_atm#$atn*$wfn\(d\) >> dos_d.dat
+# done
+# 
+# # collect "s"
+# > dos_f.dat
+# 
+# size=`grep "\(l=3 m= 1\)" .states.tmp | wc -l`
+# for f in `seq 1 $size`
+# do
+# atn=`grep "\(l=3 m= 1\)" .states.tmp | awk "NR==$p" | cut -c 26`
+# wfn=`grep "\(l=3 m= 1\)" .states.tmp | awk "NR==$p" | cut -c 40`
+# awk "NR>1" pwscf.pdos_atm#$atn*$wfn\(f\) >> dos_f.dat
+# done
+# 
+# 
+# # mpy mreplace .states.tmp "l=0 m= 1" s
+# # mpy mreplace .states.tmp "l=1 m= 1" p
+# # mpy mreplace .states.tmp "l=1 m= 2" p
+# # mpy mreplace .states.tmp "l=1 m= 3" p
+# # mpy mreplace .states.tmp "l=2 m= 1" d
+# # mpy mreplace .states.tmp "l=2 m= 2" d
+# # mpy mreplace .states.tmp "l=2 m= 3" d
+# # mpy mreplace .states.tmp "l=2 m= 4" d
+# # mpy mreplace .states.tmp "l=2 m= 5" d
+# # mpy mreplace .states.tmp "l=3 m= 1" f
+# # mpy mreplace .states.tmp "l=3 m= 2" f
+# # mpy mreplace .states.tmp "l=3 m= 3" f
+# # mpy mreplace .states.tmp "l=3 m= 4" f
+# # mpy mreplace .states.tmp "l=3 m= 5" f
+# # mpy mreplace .states.tmp "l=3 m= 6" f
+# mpy mreplace .states.tmp "l=3 m= 7" f
+# 
+# cp .states.tmp dos_legends.dat

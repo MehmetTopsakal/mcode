@@ -1,0 +1,68 @@
+### feff starts at Tue Oct 31 10:27:47 EDT 2017
+### Serial version
+### FeffPath is /home/mt/software/JFEFF/feff90/linux
+ 
+Launching FEFF version FEFF 9.9.1
+Resetting lmaxsc to 2 for iph =    2.  Use  UNFREEZE to prevent this.
+Core hole lifetime is   0.156 eV.
+Your calculation:
+ xx
+O K edge XANES using RPA corehole.
+Using:     * Self-Consistent Field potentials
+Using cards:   ATOMS CONTROL EXCHANGE TITLE RPATH POTENTIALS XANES EDGE SCF FMS S02 COREHOLE
+
+Calculating atomic potentials ...
+    overlapped atomic potential and density for unique potential    0
+    overlapped atomic potential and density for unique potential    1
+    overlapped atomic potential and density for unique potential    2
+    overlapped atomic potential and density for unique potential    3
+Done with module: atomic potentials.
+
+Calculating SCF potentials ...
+FEFF-serial using 1 thread.
+Muffin tin radii and interstitial parameters [bohr]:
+type, norman radius, muffin tin, overlap factor
+    0  1.13026E+00  1.05800E+00  1.15000E+00
+    1  1.26165E+00  1.18637E+00  1.15000E+00
+    2  1.81275E+00  1.72514E+00  1.13443E+00
+    3  1.08847E+00  1.04156E+00  1.11743E+00
+Core-valence separation energy:  ecv=   -47.000 eV
+Initial Fermi level:              mu=    -2.506 eV
+SCF ITERATION NUMBER  1
+     point #   1  energy = -47.000
+FMS for a cluster of  100 atoms around atom type   0
+FMS for a cluster of   97 atoms around atom type   1
+FMS for a cluster of  105 atoms around atom type   2
+FMS for a cluster of   97 atoms around atom type   3
+     point #  20  energy = -35.873
+     point #  40  energy = -15.623
+     point #  60  energy =  -7.851
+     point #  80  energy =  -6.479
+New Fermi level:    mu=  -6.386 eV  Charge distance=  1.0221 (partial c.d.=  6.4033)
+SCF ITERATION NUMBER  1
+     point #   1  energy = -47.000
+FMS for a cluster of  100 atoms around atom type   0
+FMS for a cluster of   97 atoms around atom type   1
+FMS for a cluster of  105 atoms around atom type   2
+FMS for a cluster of   97 atoms around atom type   3
+     point #  20  energy = -35.831
+     point #  40  energy = -15.525
+     point #  60  energy =  -6.386
+Calculating screened core-hole potential ...
+FMS calculation of full Green's function ...
+FEFF-serial using 1 thread.
+ Error opening file, phase.bin in module rdxsph
+ Fatal error
+CHOPEN
+MKGTR: Tracing over Green's function ...
+ Error opening file, phase.bin in module rdxsph
+ Fatal error
+CHOPEN
+Calculating EXAFS parameters ...
+ Error opening file, phase.bin in module rdxsph
+ Fatal error
+CHOPEN
+Calculating XAS spectra ...
+ 
+### feff ends at Tue Oct 31 10:32:14 EDT 2017
+ 

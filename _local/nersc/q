@@ -1,0 +1,20 @@
+
+for i in `seq 1 10`
+    do squeue -u `whoami`
+    sleep 2
+done
+    
+  
+  
+for i in `seq 1 100`
+    do squeue -u `whoami`
+    sleep 3
+done  
+    
+    
+    
+for i in `seq 1 1000`
+    do squeue -u `whoami`
+    sleep 5
+done      
+    

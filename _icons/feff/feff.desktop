@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Name=FEFF
+Comment=
+Exec=/home/mt/gd/mBOX/01-settings/icons/feff/feff.sh
+Icon=/home/mt/gd/mBOX/01-settings/icons/feff/feff_icon.png
+Terminal=false
+Encoding=UTF-8

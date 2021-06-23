@@ -1,0 +1,4 @@
+ 
+#(for i in * ; do if [ -d $i ]; then echo -n \ $i ; fi ; done)
+
+find * -maxdepth 0 -type d

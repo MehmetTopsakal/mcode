@@ -1,0 +1,23 @@
+case $1 in
+
+
+edison )
+ssh -v -i /home/mt/.ssh/key0/id_rsa topsakal@edison.nersc.gov
+;;
+
+
+cori )
+ssh -v -i /home/mt/.ssh/key0/id_rsa topsakal@cori.nersc.gov
+;;
+
+
+* )
+ssh -v -i /home/mt/.ssh/key0/id_rsa topsakal@edison.nersc.gov
+;;
+
+
+
+
+esac
+
+

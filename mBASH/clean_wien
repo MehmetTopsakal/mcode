@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+ 
+ 
+case $1 in 
+
+
+
+before | b )
+;;
+
+
+after | a )
+;;
+
+
+
+* )
+clean_lapw -s
+find . -type f -size 0 -delete
+rm -f clm*, dmat*, vorb*, vresp*, eece*, vsp*, vns* new_super*
+rm -f .machine* .lock* .dst* .process* .stop .lapw1para*
+rm -f case.qtlup  case.vns* case.clm* case.qtldn  case.output2* case.output1_* case.output1up_* case.output1dn_* case.outputdm_* case.energydn_*  case.energyup_* case.energy_* .lapwdmpara :xspec1 nohup.out
+;;
+
+
+esac
+

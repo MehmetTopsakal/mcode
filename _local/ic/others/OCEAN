@@ -1,0 +1,259 @@
+#!/usr/bin/env python
+
+
+
+import numpy as np
+import sys, os, time
+import subprocess as sp
+from io import open
+from shutil import copyfile, rmtree
+
+time.sleep(3)
+
+
+
+
+# part-0
+def make_common(inpfile,outfile):
+    rmtree('Common',ignore_errors=True)    
+    os.makedirs('Common', exist_ok=True)
+    os.chdir('Common')
+    copyfile('../'+inpfile,'./'+inpfile)
+    if os.path.exists('../'+outfile):
+        sp.call('$OCEAN_BIN/parse.pl --all ocean.in $OCEAN_BIN/oparse.h >> ../'+outfile, shell=True)
+    else: sp.call('$OCEAN_BIN/parse.pl --all ocean.in $OCEAN_BIN/oparse.h > ../'+outfile, shell=True)
+    sp.call('$OCEAN_BIN/defaults.pl >> ../'+outfile, shell=True)
+    sp.call('$OCEAN_BIN/edges.pl >> ../'+outfile, shell=True)
+    os.chdir('..')
+    return
+
+# part-1
+def make_opf(outfile):
+    rmtree('OPF',ignore_errors=True)
+    os.makedirs('OPF', exist_ok=True)
+    os.chdir('OPF')
+    print('running OPF')
+    sp.call('echo -e :::::::::::::: OPF started @ `date` >> ../'+outfile, shell=True)    
+    sp.call('$OCEAN_BIN/opf.pl >> ../'+outfile, shell=True)
+    sp.call('echo -e :::::::::: OPF finished @ `date` >> ../'+outfile, shell=True)    
+    print(' OPF finished')    
+    os.chdir('..')
+    return
+
+# part-2
+def make_dft(nthr,outfile):
+    rmtree('DFT',ignore_errors=True)    
+    os.makedirs('DFT', exist_ok=True)
+    os.chdir('DFT')
+    print('running DFT')
+    sp.call('echo -e :::::::::::::: DFT started @ `date` >> ../'+outfile, shell=True)
+    sp.call('module load intel/PSXE2017.u4; export OMP_NUM_THREADS='+str(int(nthr))+'; $OCEAN_BIN/dft.pl >> ../'+outfile, shell=True)
+    sp.call('echo -e :::::::::: DFT finished @ `date` >> ../'+outfile, shell=True)   
+    print(' DFT finished')      
+    os.chdir('..')
+    return
+
+def serialize_prefix():
+    sp.call('> ./Common/para_prefix', shell=True)    
+    sp.call('echo nscf	1 > ./Common/pool_control', shell=True)
+    sp.call('echo interpolate kpt	1 >> ./Common/pool_control', shell=True)
+    sp.call('echo scf	1 >> ./Common/pool_control', shell=True)
+    sp.call('echo obf	1 >> ./Common/pool_control', shell=True)
+    sp.call('echo screen	1 >> ./Common/pool_control', shell=True)
+    sp.call('echo interpolate screen	1 >> ./Common/pool_control', shell=True)    
+    return
+
+# part-3
+def make_prep(outfile):
+    rmtree('PREP',ignore_errors=True)      
+    serialize_prefix()    
+    os.makedirs('PREP', exist_ok=True)
+    os.chdir('PREP')
+    print('running PREP') 
+    sp.call('echo -e :::::::::::::: PREP started @ `date` >> ../'+outfile, shell=True)    
+    sp.call('$OCEAN_BIN/qe_dendip.pl >> ../'+outfile, shell=True)
+    sp.call('echo -e :::::::::: PREP finished @ `date` >> ../'+outfile, shell=True)  
+    print(' PREP finished')    
+    os.chdir('..')
+    return
+
+def make_screen(outfile):
+    rmtree('SCREEN',ignore_errors=True)    
+    serialize_prefix()    
+    os.makedirs('SCREEN', exist_ok=True)
+    os.chdir('SCREEN')
+    print('running SCREEN')    
+    sp.call('echo -e :::::::::::::: SCREEN started @ `date` >> ../'+outfile, shell=True)     
+    sp.call('module load intel/PSXE2017.u4; export OMP_NUM_THREADS=1; $OCEAN_BIN/screen.pl >> ../'+outfile, shell=True)
+    sp.call('echo -e :::::::::: SCREEN finished @ `date` >> ../'+outfile, shell=True)  
+    print(' SCREEN finished')     
+    os.chdir('..')
+
+def make_cnbse(outfile): 
+    rmtree('CNBSE',ignore_errors=True)    
+    serialize_prefix()    
+    os.makedirs('CNBSE', exist_ok=True)
+    os.chdir('CNBSE')
+    print('running CNBSE') 
+    sp.call('echo -e :::::::::::::: CNBSE started @ `date` >> ../'+outfile, shell=True)      
+    sp.call('module load intel/PSXE2017.u4; export OMP_NUM_THREADS=1; $OCEAN_BIN/cnbse_mpi.pl >> ../'+outfile, shell=True)
+    sp.call('echo  >> ../'+outfile, shell=True)      
+    sp.call('echo -e :::::::::: CNBSE finished @ `date` >> ../'+outfile, shell=True) 
+    print(' CNBSE finished')    
+    os.chdir('..')
+    import mOCEAN; mOCEAN.readocean()
+    return
+
+
+
+
+
+# =================================================================== 
+inputs = sys.argv
+
+for a in range(len(inputs)):
+    s=inputs[a].split('=')
+    if s[0]   == 'part'  or s[0] == 'p'    : part = s[1]    
+    elif s[0] == 'nth'   or s[0] == 'nthr' : nthr = int(s[1])  
+    elif s[0] == 'cpu_per_job'   or s[0] == 'cpj' : cpj = int(s[1])      
+    elif s[0] == 'input' or s[0] == 'i'    : inp  = s[1]  
+    #elif s[0] == 'npj'   or s[0] == 'N'    : npj  = int(s[1]) 
+    #elif s[0] == 'cpj'   or s[0] == 'n'    : cpj  = int(s[1])     
+
+try:
+    nthr
+except:
+    nthr = 1
+
+try:
+    part
+except:
+    ef = open('_ERROR', 'w')
+    ef.write('\n ERROR: part unknown !!! Exiting.... \n')
+    sys.exit('\n ERROR: part unknown !!! Exiting.... \n')    
+
+
+try:
+    inp
+except:
+    inp='ocean'
+inpfile=inp+'.in'
+outfile=inp+'.out'
+
+try:
+    nthr
+except:
+    nthr = []
+
+
+
+
+
+# get number of available nodes
+shout = sp.run(" env | grep SLURM_NNODES | awk -F = '{print $2}' ", 
+                     shell=True, stdout=sp.PIPE, universal_newlines=True)
+try:
+    node_avail = int(shout.stdout.split()[0])
+except:
+    node_avail = 0 # probably this is a login node
+    cpj = 1
+    if not nthr: nthr = 1
+
+
+
+if node_avail > 0:
+    # get cpu per node 
+    cpn = sp.run(" env | grep SLURM_CPUS_ON_NODE | awk -F = '{print $2}' ",
+                 shell=True, stdout=sp.PIPE, universal_newlines=True)
+    cpn = int(cpn.stdout.split()[0])
+    if not nthr: nthr = 1
+    if not cpj: cpj = node_avail*(cpn/nthr)
+    N = max(1,cpj/(cpn/nthr))
+
+    
+    
+# determine cpj
+
+
+
+
+# get hostname
+host = os.uname()[1]
+if  host[0:8] == 'icsubmit':
+    para_prefix = 'para_prefix{# }\n'
+    os.environ['OCEAN_BIN'] = '/sdcc/u/mtopsakal/software/ocean/hsw/ocean-2.1.0/'    
+elif host[0:7] == 'cfnhost':
+    sc = '  '
+    para_prefix = 'para_prefix{srun -n '+str(int(cpj))+sc+' '+'-N '+str(N)+' } \n'    
+    os.environ['OCEAN_BIN'] = '/sdcc/u/mtopsakal/software/ocean/gen34/ocean-2.1.0/'
+    
+
+        
+
+
+def put_para_prefix(inpfile,para_prefix):        
+    with open(inpfile, mode='r') as f:
+        lines = f.readlines()    
+    f = open("newfile.tmp","w")
+    here=os.getcwd()
+    f.write(para_prefix)
+    for line in lines:
+        if 'para_prefix' not in line:
+            f.write(line)
+    f.close()
+    os.rename('newfile.tmp',inpfile)
+    return
+
+
+
+ 
+# ===================================================================  
+if part == '0' or part == 'c':
+    sp.call(' rm -rf CNBSE Common PAW NBSE PREP DFT SCREEN zWFN OPF absspct.png  ocean.out ocean_absspcts.dat *.npz ', shell=True)
+    make_common(inpfile,outfile)
+    serialize_prefix()
+
+# ===================================================================  
+if part == '1' or part == 'opf':
+    serialize_prefix()
+    make_opf(outfile)
+    
+# ===================================================================  
+if part == '01' :
+    sp.call(' rm -rf CNBSE Common PAW NBSE PREP DFT SCREEN zWFN OPF absspct.png  ocean.out ocean_absspcts.dat *.npz ', shell=True)
+    serialize_prefix()
+    make_common(inpfile,outfile)    
+    make_opf(outfile)    
+    
+# ===================================================================  
+if part == '2' or part == 'dft':
+    put_para_prefix(inpfile,para_prefix)  
+    make_dft(nthr,outfile)
+       
+# ===================================================================  
+if part == '3' or part == 'prep':
+    serialize_prefix()  
+    make_prep(outfile)     
+       
+# ===================================================================  
+if part == '4' or part == 'screen':
+    serialize_prefix()    
+    make_screen(outfile)  
+       
+# ===================================================================  
+if part == '5' or part == 'cnbse':
+    serialize_prefix()    
+    make_cnbse(outfile)  
+           
+# ===================================================================  
+if part == '345' or part == 'psc':
+    serialize_prefix()  
+    make_prep(outfile) 
+    make_screen(outfile)     
+    make_cnbse(outfile)      
+    
+
+
+
+
+

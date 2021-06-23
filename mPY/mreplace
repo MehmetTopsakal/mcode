@@ -1,0 +1,55 @@
+#!/usr/bin/python2
+
+
+import sys, os
+
+inputs = sys.argv
+ilen   = len(inputs)
+
+
+def replacev1(filetoreplace,input_pattern,output_pattern,verbosity):
+    return
+    
+
+
+
+
+
+
+
+if ilen == 1:
+    print('input file is missing')   
+    print('USAGE : mreplace $file $in $out')
+    sys.exit(1)
+if ilen == 2:
+    print('input pattern is missing')    
+    print('USAGE : mreplace $file $in $out')
+    sys.exit(1)
+if ilen == 3:
+    print('output pattern is missing') 
+    print('setting it as space ! (pattern remove mode)')   
+    inputs.extend([' '])
+
+
+
+
+
+filetoreplace = inputs[1]
+input_pattern = inputs[2]
+output_pattern = inputs[3]
+
+
+with open(filetoreplace, mode='r') as f:
+    lines = f.readlines()
+    
+for i, line in enumerate(lines):
+    
+    if input_pattern in line:
+        f1 = open(filetoreplace,'r')
+        f2 = open('mreplace.tmp','w')
+        for line in f1:
+            f2.write(line.replace(input_pattern,output_pattern))
+        f1.close()
+        f2.close()
+        os.rename('mreplace.tmp',filetoreplace)
+        break

@@ -1,0 +1,14 @@
+case $1 in
+
+
+* )
+if [ -z "$1" ]; then
+ssh -v -i /home/mt/.ssh/key0/id_rsa mtopsakal@nano.bnl.gov
+  else 
+ssh -v -i /home/mt/.ssh/key0/id_rsa mtopsakal@$1
+fi  
+;;
+
+esac
+
+

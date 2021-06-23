@@ -1,0 +1,191 @@
+##CIF_1.1
+
+data_sm_global
+#Used dictionaries
+loop_
+_audit_conform_dict_name
+_audit_conform_dict_version
+_audit_conform_dict_location
+cif_core.dic 	2.4.2 	.
+cif_pd.dic 		1.0.1 	.
+cif_sm.dic 		0.1 	'redaktion.landolt-boernstein(at)springer.com'
+
+#About this content and reference
+_sm_credits_copyright
+;PAULING FILE Multinaries Edition - 2012. SpringerMaterials Release 2014.
+http://www.paulingfile.com
+Unique LPF ID Number SD1815937
+Project Coordinator: Shuichi Iwata
+Section-Editors: Karin Cenzual (Crystal Structures), Hiroaki Okamoto (Phase 
+Diagrams), Fritz Hulliger (Physical Properties)
+(c) Springer & Material Phases Data System (MPDS), Switzerland & National 
+Institute for Materials Science (NIMS), Japan 2014.
+(Data generated pre-2002: (c) Springer & MPDS & NIMS; 
+post-2001: (c) Springer & MPDS)
+All Rights Reserved. Version 2014.06.
+;
+
+_audit_creation_method
+;This data have been compiled from the crystallographic datasheet for 
+"K2MgCl4 Crystal Structure" 
+taken from SpringerMaterials (sm_isp_sd_1815937).
+;
+
+_publ_section_references
+;Gibbons C.S., Reinsborough V.C., Whitla W.A.: <i>Crystal structures of K<sub>2</sub>MgCl<sub>4</sub> and Cs<sub>2</sub>MgCl<sub>4</sub></i>. Canadian Journal of Chemistry <b>53</b> (1975) 114-118.
+;
+
+#Phase classification
+_sm_phase_labels				'K2MgCl4'
+_chemical_name_mineral			''
+_sm_chemical_compound_class		'chloride'
+_sm_phase_prototype				'K2 NiF4 '
+_sm_pearson_symbol				'tI14'
+_symmetry_Int_Tables_number		139
+_sm_sample_details
+;sample prepared from KCl, MgCl<sub>2</sub>, 
+single crystal (determination of cell parameters), 
+single crystal, 0.3 mm<sup>3</sup> (determination of structural parameters)
+;
+_sm_measurement_details
+;automatic diffractometer (determination of cell parameters), 
+automatic diffractometer; Picker FACS-I (determination of structural parameters), 
+X-rays, Mo K&#x03b1;; &#x03bb; = 0.07107 nm (determination of cell and structural parameters)
+;
+_sm_interpretation_details
+;complete structure determined, 
+full-matrix least-squares refinement; 180 reflections, 
+<i>R</i> = 0.045
+;
+
+data_sm_isp_SD1815937-standardized_unitcell
+#Cell Parameters
+_cell_length_a					4.94
+_cell_length_b					4.94
+_cell_length_c					15.58
+_cell_angle_alpha				90
+_cell_angle_beta				90
+_cell_angle_gamma				90
+_sm_length_ratio_ab				1.000
+_sm_length_ratio_bc				0.317
+_sm_length_ratio_ca				3.154
+_cell_volume 					380.2
+_symmetry_space_group_name_H-M	'I4/mmm'
+_symmetry_Int_Tables_number		139
+_cell_formula_units_Z			2
+_sm_cell_transformation
+;No transformation from published to standardized cell parameters necessary.
+;
+
+#Atom Coordinates
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_Wyckoff_symbol
+_sm_site_symmetry
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_sm_coordination_number
+_sm_atomic_environment_type
+Cl2 'Cl' .4e .4mm 0 0 0.1598 1 1 'single atom, Mg'
+K 'K' .4e .4mm 0 0 0.3567 1 9 'tricapped trigonal prism, Cl<sub>9</sub>'
+Cl1 'Cl' .4c .mmm. 0 0.5 0 1 2 'collinear, Mg<sub>2</sub>'
+Mg 'Mg' .2a .4/mmm 0 0 0 1 6 'octahedron, Cl<sub>6</sub>'
+
+_sm_atom_site_transformation
+;No transformation from published to standardized cell parameters necessary.
+;
+
+#Anisotropic Displacement Parameters
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_sm_atom_site_aniso_2U_12
+_sm_atom_site_aniso_2U_13
+_atom_site_aniso_U_22
+_sm_atom_site_aniso_2U_23
+_atom_site_aniso_U_33
+K 0.0421(7) 0 0 0.0421(7) 0 0.0234(6)
+Mg 0.0113(8) 0 0 0.0113(8) 0 0.0209(8)
+Cl1 0.0115(7) 0 0 0.0285(9) 0 0.052(9)
+Cl2 0.0455(7) 0 0 0.0455(7) 0 0.0187(6)
+
+data_sm_isp_SD1815937-published_cell
+#Cell Parameters
+_cell_length_a					4.94(1)
+_cell_length_b					4.94(1)
+_cell_length_c					15.58(4)
+_cell_angle_alpha				90
+_cell_angle_beta				90
+_cell_angle_gamma				90
+_sm_length_ratio_ab				1.000
+_sm_length_ratio_bc				0.317
+_sm_length_ratio_ca				3.154
+_cell_volume 					380.21
+_symmetry_space_group_name_H-M	'I4/mmm'
+_symmetry_Int_Tables_number		139
+_cell_formula_units_Z			2
+
+#Atom Coordinates
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_Wyckoff_symbol
+_sm_site_symmetry
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_sm_coordination_number
+_sm_atomic_environment_type
+K 'K' .4e .4mm 0 0 0.3567(1) 1 ? '?'
+Mg 'Mg' .2a .4/mmm 0 0 0 1 ? '?'
+Cl1 'Cl' .4c .mmm. 0.5 0 0 1 ? '?'
+Cl2 'Cl' .4e .4mm 0 0 0.1598(1) 1 ? '?'
+
+#Anisotropic Displacement Parameters
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_sm_atom_site_aniso_2U_12
+_sm_atom_site_aniso_2U_13
+_atom_site_aniso_U_22
+_sm_atom_site_aniso_2U_23
+_atom_site_aniso_U_33
+K 0.0421(7) 0 0 0.0421(7) 0 0.0234(6)
+Mg 0.0113(8) 0 0 0.0113(8) 0 0.0209(8)
+Cl1 0.0115(7) 0 0 0.0285(9) 0 0.052(9)
+Cl2 0.0455(7) 0 0 0.0455(7) 0 0.0187(6)
+
+data_sm_isp_SD1815937-niggli_reduced_cell
+#Cell Parameters
+_cell_length_a					4.94
+_cell_length_b					4.94
+_cell_length_c					8.5373
+_cell_angle_alpha				106.817
+_cell_angle_beta				106.817
+_cell_angle_gamma				90
+_sm_length_ratio_ab				1.000
+_sm_length_ratio_bc				0.579
+_sm_length_ratio_ca				1.728
+_cell_volume 					190.1
+_symmetry_space_group_name_H-M	''
+_symmetry_Int_Tables_number		?
+_cell_formula_units_Z			2
+
+#Atom Coordinates
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_Wyckoff_symbol
+_sm_site_symmetry
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_sm_coordination_number
+_sm_atomic_environment_type
+? ? ? ? ? ? ? ? ? ?
+

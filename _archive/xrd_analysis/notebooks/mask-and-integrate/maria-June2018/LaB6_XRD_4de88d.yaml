@@ -1,0 +1,194 @@
+analysis_stage: raw
+beamline_config:
+  Filters: [1Cu, 2Cu, 3Cu, 4Cu]
+  Verification time: '2018-06-16 16:29:29'
+  Verified by: rw
+  beamstop: W
+beamline_id: 28-id-2
+bt_experimenters: [Randy, Weidner, Maria, Okuniewski, Jonova, Thomas, Gyuchul, Park]
+bt_piLast: Ecker
+bt_safN: '302524'
+bt_uid: bb8ede01
+bt_wavelength: 0.1902
+calibration_md:
+  calibrant_name: undefined
+  centerX: 1740.4801161354526
+  centerY: 996.7438744483815
+  dSpacing:
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - &id001 !!python/object/apply:numpy.dtype
+      args: [f8, 0, 1]
+      state: !!python/tuple [3, <, null, null, null, -1, -1, 0]
+    - !!binary |
+      8rtCHNNGAEA=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      G9gqweIw/D8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      5EYPEEzv8z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      zH5+PRsA8T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      8rtCHNNG8D8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      /tR46SYx7D8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      0xsrs+ne6T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      yXmujDc36T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      8S6gqccE5z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      136uJcSz5T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      5EYPEEzv4z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      VNvKdK8P4z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      RIJQRm/L4j8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      3+/dF4fU4T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      Vpn742sy4T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      +6F+PRsA4T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      Id9CHNNG4D8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      sSJWztOU3z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      0z02FbZG3z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      3L1JxHUj3j8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      BoRIyr5c3T8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      /tR46SYx3D8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      IvutPbmN2z8=
+  - !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      uflzd6pZ2z8=
+  detector: Perkin detector
+  directDist: 1338.9707488734564
+  dist: 1.3389694874768279
+  pixel1: 0.0002
+  pixel2: 0.0002
+  pixelX: 200.0
+  pixelY: 200.0
+  poni1: 0.2010909320870451
+  poni2: 0.3475105037271284
+  poni_file_name: /tmp/tmpocbfmgwl/from_calib_func.poni
+  rot1: -0.0004372911168751251
+  rot2: -0.0013011170635250423
+  rot3: 8.248452132223791e-10
+  splineFile: null
+  tilt: 0.07864623786747792
+  tiltPlanRotation: -71.42308052482743
+  time: 20180616-230025
+  wavelength: 1.9020000000000003e-11
+detector_calibration_client_uid: 51fea4d7-4745-4e41-ade9-ee662920594c
+detectors: [pe3]
+extents: !!python/tuple
+- [2.5, -2.5]
+- [-2.5, 2.5]
+facility: NSLS-II
+filter_positions: {flt1: Out, flt2: In, flt3: Out, flt4: Out}
+group: XPD
+hints:
+  dimensions:
+  - !!python/tuple
+    - [diff_y]
+    - primary
+  - !!python/tuple
+    - [diff_x]
+    - primary
+  gridding: rectilinear
+motors: !!python/tuple [diff_y, diff_x]
+num_intervals: 120
+num_points: 121
+plan_args:
+  args: &id002 ['EpicsMotor(prefix=''XF:28IDC-ES:1{Dif:1-Ax:Y}Mtr'', name=''diff_y'',
+      settle_time=0.0, timeout=None, read_attrs=[''user_readback'', ''user_setpoint''],
+      configuration_attrs=[''user_offset'', ''user_offset_dir'', ''velocity'', ''acceleration'',
+      ''motor_egu''])', 2.5, -2.5, 11, 'EpicsMotor(prefix=''XF:28IDC-ES:1{Dif:1-Ax:X}Mtr'',
+      name=''diff_x'', settle_time=0.0, timeout=None, read_attrs=[''user_readback'',
+      ''user_setpoint''], configuration_attrs=[''user_offset'', ''user_offset_dir'',
+      ''velocity'', ''acceleration'', ''motor_egu''])', -2.5, 2.5, 11, false]
+  detectors: ['PerkinElmerContinuous(prefix=''XF:28IDD-ES:2{Det:PE3}'', name=''pe3'',
+      read_attrs=[''tiff'', ''stats1'', ''stats1.total''], configuration_attrs=[''cam'',
+      ''cam.acquire_period'', ''cam.acquire_time'', ''cam.image_mode'', ''cam.manufacturer'',
+      ''cam.model'', ''cam.num_exposures'', ''cam.trigger_mode'', ''tiff'', ''tiff.configuration_names'',
+      ''tiff.port_name'', ''tiff.asyn_pipeline_config'', ''tiff.blocking_callbacks'',
+      ''tiff.enable'', ''tiff.nd_array_port'', ''tiff.plugin_type'', ''tiff.auto_increment'',
+      ''tiff.auto_save'', ''tiff.file_format'', ''tiff.file_name'', ''tiff.file_path'',
+      ''tiff.file_path_exists'', ''tiff.file_template'', ''tiff.file_write_mode'',
+      ''tiff.full_file_name'', ''tiff.num_capture'', ''images_per_set'', ''number_of_sets'',
+      ''stats1'', ''stats1.configuration_names'', ''stats1.port_name'', ''stats1.asyn_pipeline_config'',
+      ''stats1.blocking_callbacks'', ''stats1.enable'', ''stats1.nd_array_port'',
+      ''stats1.plugin_type'', ''stats1.bgd_width'', ''stats1.centroid_threshold'',
+      ''stats1.compute_centroid'', ''stats1.compute_histogram'', ''stats1.compute_profiles'',
+      ''stats1.compute_statistics'', ''stats1.hist_max'', ''stats1.hist_min'', ''stats1.hist_size'',
+      ''stats1.profile_cursor'', ''stats1.profile_size'', ''stats1.ts_control'', ''stats1.ts_num_points''])']
+  per_step: None
+plan_name: rel_grid_scan
+plan_pattern: outer_product
+plan_pattern_args:
+  args: *id002
+plan_pattern_module: bluesky.plan_patterns
+plan_type: generator
+robot: true
+robot_identifier: 20
+sa_uid: 8517ba42
+sample_name: LaB6_XRD
+sc_dk_field_uid: 34a218bb-cb66-4ccb-9b24-357d304c1fa0
+scan_id: 77
+shape: !!python/tuple [11, 11]
+snaking: !!python/tuple [false, false]
+time: 1529227824.5349166
+uid: 4de88dac-b1ef-4d52-8875-359c36249394
+xpdacq_md_version: 0.1

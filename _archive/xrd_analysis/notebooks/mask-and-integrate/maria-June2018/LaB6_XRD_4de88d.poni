@@ -1,0 +1,12 @@
+# Nota: C-Order, 1 refers to the Y axis, 2 to the X axis 
+# Calibration done at Wed Feb 27 10:08:04 2019
+poni_version: 2
+Detector: Perkin
+Detector_config: {"pixel1": 0.0002, "pixel2": 0.0002}
+Distance: 1.3389694874768279
+Poni1: 0.2010909320870451
+Poni2: 0.3475105037271284
+Rot1: -0.0004372911168751251
+Rot2: -0.0013011170635250423
+Rot3: 8.248452132223791e-10
+Wavelength: 1.9020000000000003e-11

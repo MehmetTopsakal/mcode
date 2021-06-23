@@ -1,0 +1,223 @@
+
+rastgele=$RANDOM
+
+rm -rf  .*.hyap
+
+case $1 in
+
+1 )
+
+echo "#!/usr/bin/env bash
+
+adres1=\`pwd\`
+for i in \$(for i in * ; do if [ -d \$i ]; then echo \$i ; fi ; done) ; do
+cd \$i
+ 
+#komut1
+ $2 
+ $3 
+ $4 
+ $5 
+ $6 
+  
+cd \$adres1       
+done   
+"  > .$rastgele.hyap
+chmod +x .$rastgele.hyap ;  ./.$rastgele.hyap # 2>/dev/null 1>/dev/null 
+#vi .$rastgele.hyap ; 
+#cat .$rastgele.hyap ;
+#chmod +x .hyap ;
+#echo  nohup .$rastgele.hyap 2\>/dev/null 1\>/dev/null \&
+;;
+
+
+2 )
+
+echo "#!/usr/bin/env bash
+
+adres1=\`pwd\`
+for i in \$(for i in * ; do if [ -d \$i ]; then echo \$i ; fi ; done) ; do
+cd \$i
+ 
+#komut1
+ $2 
+ $3 
+ $4 
+ $5 
+ $6 
+
+        adres2=\`pwd\`
+        for j in \$(for j in * ; do if [ -d \$j ]; then echo \$j ; fi ; done) ; do
+        cd \$j
+
+        #komut2
+         $2 
+         $3 
+         $4 
+         $5 
+         $6
+        
+        cd \$adres2
+        done
+  
+cd \$adres1       
+done   
+"  > .$rastgele.hyap
+chmod +x .$rastgele.hyap ;  ./.$rastgele.hyap # 2>/dev/null 1>/dev/null 
+#vi .$rastgele.hyap ; 
+#cat .$rastgele.hyap ;
+#chmod +x .hyap ;
+#echo  nohup .$rastgele.hyap 2\>/dev/null 1\>/dev/null \&
+;;
+
+
+3 )
+
+echo "#!/usr/bin/env bash
+
+adres1=\`pwd\`
+for i in \$(for i in * ; do if [ -d \$i ]; then echo \$i ; fi ; done) ; do
+cd \$i
+ 
+#komut1
+ $2 
+ $3 
+ $4 
+ $5 
+ $6 
+
+        adres2=\`pwd\`
+        for j in \$(for j in * ; do if [ -d \$j ]; then echo \$j ; fi ; done) ; do
+        cd \$j
+
+        #komut2
+         $2 
+         $3 
+         $4 
+         $5 
+         $6
+        
+                adres3=\`pwd\`
+                for k in \$(for k in * ; do if [ -d \$k ]; then echo \$k ; fi ; done) ; do
+                cd \$k
+
+                #komut2
+                 $2 
+                 $3 
+                 $4 
+                 $5 
+                 $6
+               
+                cd \$adres3
+                done  
+
+        cd \$adres2
+        done
+  
+cd \$adres1       
+done   
+"  > .$rastgele.hyap
+chmod +x .$rastgele.hyap ;  ./.$rastgele.hyap # 2>/dev/null 1>/dev/null 
+#vi .$rastgele.hyap ; 
+#cat .$rastgele.hyap ;
+#chmod +x .hyap ;
+#echo  nohup .$rastgele.hyap 2\>/dev/null 1\>/dev/null \&
+;;
+
+
+
+4 )
+
+echo "#!/usr/bin/env bash
+
+adres1=\`pwd\`
+for i in \$(for i in * ; do if [ -d \$i ]; then echo \$i ; fi ; done) ; do
+cd \$i
+ 
+#komut1
+ $2 
+ $3 
+ $4 
+ $5 
+ $6 
+
+        adres2=\`pwd\`
+        for j in \$(for j in * ; do if [ -d \$j ]; then echo \$j ; fi ; done) ; do
+        cd \$j
+
+        #komut2
+         $2 
+         $3 
+         $4 
+         $5 
+         $6
+        
+                adres3=\`pwd\`
+                for k in \$(for k in * ; do if [ -d \$k ]; then echo \$k ; fi ; done) ; do
+                cd \$k
+
+                #komut3
+                 $2 
+                 $3 
+                 $4 
+                 $5 
+                 $6
+               
+                        adres4=\`pwd\`
+                        for l in \$(for l in * ; do if [ -d \$l ]; then echo \$l ; fi ; done) ; do
+                        cd \$l
+
+                        #komut4
+                         $2 
+                         $3 
+                         $4 
+                         $5 
+                         $6
+
+                        cd \$adres4
+                        done 
+
+                cd \$adres3
+                done  
+
+        cd \$adres2
+        done
+  
+cd \$adres1       
+done   
+"  > .$rastgele.hyap
+chmod +x .$rastgele.hyap ;  ./.$rastgele.hyap # 2>/dev/null 1>/dev/null 
+#vi .$rastgele.hyap ; 
+#cat .$rastgele.hyap ;
+#chmod +x .hyap ;
+#echo  nohup .$rastgele.hyap 2\>/dev/null 1\>/dev/null \&
+;;
+
+
+* )
+
+echo "#!/usr/bin/env bash
+
+adres1=\`pwd\`
+for i in \$(for i in * ; do if [ -d \$i ]; then echo \$i ; fi ; done) ; do
+cd \$i
+ 
+#komut1
+ $2 
+ $3 
+ $4 
+ $5 
+ $6 
+  
+cd \$adres1       
+done   
+"  > .$rastgele.hyap
+chmod +x .$rastgele.hyap ;  ./.$rastgele.hyap # 2>/dev/null 1>/dev/null 
+#vi .$rastgele.hyap ; 
+#cat .$rastgele.hyap ;
+#chmod +x .hyap ;
+#echo  nohup .$rastgele.hyap 2\>/dev/null 1\>/dev/null \&
+;;
+
+
+esac

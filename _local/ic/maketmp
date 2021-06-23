@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+
+if [ -z "$1" ]; then  tmpfname=qetmp         ; else  tmpfname=$1   ; fi
+
+
+# 
+tmpsfolder=/sdcc/u/mtopsakal/.storage/TMPs
+wfcsfolder=/hpcgpfs01/scratch/mtopsakal/.storage/WFCs
+
+timeid=`date +"%T.%N"`
+pathid=`pwd | sed 's/\//\::/g'`
+
+
+# check qetmp folder; create if it doesn't exist
+if test -e $tmpfname
+then 
+echo "using available $tmpfname folder"
+else
+mkdir $tmpsfolder/tmp.$pathid.$timeid
+mkdir $wfcsfolder/wfc.$pathid.$timeid
+ln -s $tmpsfolder/tmp.$pathid.$timeid ./$tmpfname
+ln -s $wfcsfolder/wfc.$pathid.$timeid $tmpsfolder/tmp.$pathid.$timeid/wfc
+fi
+
+
+# check wfc link in qetmp folder; create if it doesn't exist
+if test -e $tmpfname/wfc
+then 
+echo ''
+else
+mkdir $wfcsfolder/wfc.$pathid.$timeid
+ln -s $wfcsfolder/wfc.$pathid.$timeid ./$tmpfname/wfc
+fi
+

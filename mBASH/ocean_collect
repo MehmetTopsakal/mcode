@@ -1,0 +1,37 @@
+#!/bin/bash
+
+
+if test -e ocean_absspcts.dat
+then
+echo ""
+echo "ocean_absspcts.dat exists here. Please remove it first"
+echo ""
+exit
+fi
+
+ls -l absspct* | awk '{print "# " $9}' > .otmpx
+size=`cat .otmpx |  wc -l`
+natom=`cat .otmpx |  cut -c 14-17 | uniq | wc -l`
+nphoton=`cat .otmpx |  cut -c 22-23 | sort | uniq | wc -l`
+
+
+echo "# natom=$natom nphoton=$nphoton" >> .otmpx
+echo "  "         >> .otmpx
+
+
+for i in `seq 1 $size`
+do
+file=`awk "NR==$i" .otmpx | awk '{print $2}'`
+echo "########### $file "         >> .otmpx
+cat $file | awk '{print $1"  "$2}' >> .otmpx
+echo "  "         >> .otmpx
+done
+
+
+mv .otmpx ocean_absspcts.dat
+cp ocean_absspcts.dat ..
+
+if [ "$1" = "r" ]; then rm -rf absspct_*  abslanc_* .Psi* ; fi
+
+
+

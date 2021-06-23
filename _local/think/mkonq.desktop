@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Name=mkonq
+Comment=
+Exec=mkonq.sh
+Icon=/home/mt/code/local/think/mkonq.png
+Terminal=true
+Encoding=UTF-8

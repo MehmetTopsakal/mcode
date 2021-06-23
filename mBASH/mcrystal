@@ -1,0 +1,258 @@
+#!/bin/bash
+
+case `arch` in
+
+i686 )
+v2xsf=~/mBOX/programs/v2xsf.i686 ;;
+
+x86_64 )
+v2xsf=~/mBOX/programs/v2xsf.x86_64 ;;
+
+* )
+v2xsf=~/mBOX/programs/v2xsf.x86_64 ;;
+
+esac
+
+
+
+
+
+
+case `hostname` in
+
+mt-Think  )
+XCRYSDEN=/opt/xcrysden-1.5.60-bin-shared/xcrysden ;;
+# 
+# mac )
+# XCRYSDEN=/home/mt/Dropbox/bin/PROGRAMS/XCrySDen-1.5.23/xcrysden;;
+# 
+
+thinkpadx1  )
+XCRYSDEN=~/software/xcrysden-1.5.60-bin-semishared/xcrysden ;;
+# 
+# mac )
+# XCRYSDEN=/home/mt/Dropbox/bin/PROGRAMS/XCrySDen-1.5.23/xcrysden;;
+# 
+
+
+* )
+XCRYSDEN=xcrysden ;;
+
+esac
+
+
+
+
+  file=` echo $1 | awk -F "/"  '{ print $NF }'`
+folder=` echo $1 | awk -F "/" '{ for (i = 1; i <= (NF-1); i++) printf("%s/", $i ) }'`
+
+
+
+
+case $file in
+
+*.xyz )
+cd $folder
+$XCRYSDEN --xyz $file &
+;;
+
+
+*.xsf )
+cd $folder
+$XCRYSDEN --xsf $file &
+;;
+
+
+*.in )
+cd $folder
+$XCRYSDEN --pwi $file &
+;;
+
+*.out )
+cd $folder
+$XCRYSDEN --pwo $file &
+;;
+
+
+*.STRUCT_OUT  )
+cd $folder
+
+ntype1=`awk "NR>4" $file | awk '{print $1 }' | grep 1 | wc -l`
+ntype2=`awk "NR>4" $file | awk '{print $1 }' | grep 2 | wc -l`
+ntype3=`awk "NR>4" $file | awk '{print $1 }' | grep 3 | wc -l`
+ntype4=`awk "NR>4" $file | awk '{print $1 }' | grep 4 | wc -l`
+ntype5=`awk "NR>4" $file | awk '{print $1 }' | grep 5 | wc -l`
+ntype6=`awk "NR>4" $file | awk '{print $1 }' | grep 6 | wc -l`
+ntype7=`awk "NR>4" $file | awk '{print $1 }' | grep 7 | wc -l`
+ntype8=`awk "NR>4" $file | awk '{print $1 }' | grep 8 | wc -l`
+ntype9=`awk "NR>4" $file | awk '{print $1 }' | grep 9 | wc -l`
+
+echo "system"  > mc.tmp 
+echo "1.0000" >> mc.tmp 
+awk "NR<4" $file >> mc.tmp 
+echo `ls -l *.psf | awk '{print $8}' | cut -c 1` >> mc.tmp 
+echo "$ntype1 $ntype2" >> mc.tmp 
+echo "D" >> mc.tmp 
+awk "NR>4" $file | awk '{print $3" "$4" "$5 }' >> mc.tmp 
+$v2xsf -D mc.tmp
+$XCRYSDEN --xsf mc.tmp.xsf
+rm -f  mc.tmp.xsf mc.tmp
+;;
+
+
+*.gen )
+cd $folder
+random=$RANDOM
+mkdir .mcrystal_tmp2.$random
+cd .mcrystal_tmp2.$random
+cp ../$file .
+/home/mt/Dropbox/bin/MSE-v1.0/bin/gen2pos $file
+$v2xsf -D *CAR
+XCRYSDEN --xsf *.xsf > /dev/null
+cd .. ; rm -rf .mcrystal_tmp2.$random
+;;
+
+
+* ) 
+cd $folder
+$v2xsf -D $file
+mv $file.xsf .$file.xsf
+$XCRYSDEN --xsf .$file.xsf
+rm -f  .$file.xsf
+;;
+
+esac
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+# SILMEEEEE SILMEEEEEE
+
+# file=$1
+# math=`awk "NR==6" $file | awk '{print ($1*1)}'`
+# 
+# case $math in
+# 0 ) # VASP5 file
+#     scale=`awk  "NR==2" $file  | awk '{print $1}'`
+#   lattice=`awk "NR==3,NR==5" $file  | awk -v "c=$scale" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f" "\n",($1*c),($2*c),($3*c))}'`
+#    labels=`awk "NR==6" $file ` ; ntypes=`awk "NR==7" $file | awk '{print NF}'`
+#    natoms=`awk "NR==7" $file  | awk '{print ($1+$2+$3+$4+$5+$6+$7+$8+$9+$10)}'` ; math2=`echo $natoms + 8 | bc`
+#      mode=`awk "NR==8" $file  | awk '{print $1}'`
+#            awk "NR==9,NR==$math2" $file > .positions
+# ;;
+# 
+# * ) # VASP4 file
+#     scale=`awk  "NR==2" $file  | awk '{print $1}'`
+#   lattice=`awk "NR==3,NR==5" $file  | awk -v "c=$scale" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f" "\n",($1*c),($2*c),($3*c))}'`
+#    labels=`awk "NR==6" $file ` ; ntypes=`awk "NR==7" $file | awk '{print NF}'`
+#    natoms=`awk "NR==7" $file  | awk '{print ($1+$2+$3+$4+$5+$6+$7+$8+$9+$10)}'` ; math2=`echo $natoms + 8 | bc`
+#      mode=`awk "NR==8" $file  | awk '{print $1}'`
+#            awk "NR==9,NR==$math2" $file > .positions
+# ;;
+# 
+# esac
+
+
+
+
+
+
+
+
+
+
+
+# 
+# 
+# 
+# 
+# 
+# existenceoffish=`echo $1 | grep "fish" | wc -l`
+# 
+# if [ $existenceoffish = "1" ]; then
+# 
+#   dosya=` echo $1 | awk -F "/"  '{ print $NF }'`
+#   adres=` echo $1  | awk -F ":22" '{print $2}' |  awk -F "/" '{ for (i = 1; i <= (NF-1); i++) printf("%s/", $i ) }'`
+#   user=`ps ux | grep mmatlab | grep fish | awk '{print $13}' | awk -F "@" '{print $1}' | awk -F "/" '{print $3}'`
+#   ip=` echo $1  | awk -F "@" '{print $2}' | awk -F ":"  '{print $1}'`
+# case $dosya in
+# 
+#   *.dat | *.m )
+# 
+#   rm -rf /home/mt/MATLAB/tmp1 ; mkdir /home/mt/MATLAB/tmp1 ; cd /home/mt/MATLAB/tmp1
+#   scp $user@$ip:$adres/$dosya /home/mt/MATLAB/tmp1
+#   scp $user@$ip:$adres/*.dat /home/mt/MATLAB/tmp1
+#   scp $user@$ip:$adres/*.m /home/mt/MATLAB/tmp1
+#   konqueror # --open-session mmatlab
+# #   matlab -nosplash  -desktop
+#   scp -r /home/mt/MATLAB/tmp1/* $user@$ip:$adres ;;
+# 
+#   * )
+# 
+#   adres=` echo $1  | awk -F ":22" '{print $2}' |  awk -F "/" '{ for (i = 1; i <= (NF); i++) printf("%s/", $i ) }'`
+# 
+#   rm -rf /home/mt/MATLAB/tmp1 ; mkdir /home/mt/MATLAB/tmp1 ; cd /home/mt/MATLAB/tmp1
+#   scp  $user@$ip:$adres/*.dat /home/mt/MATLAB/tmp1
+#   scp  $user@$ip:$adres/*.m /home/mt/MATLAB/tmp1
+#   konqueror # --open-session mmatlab
+# #  matlab -nosplash  -desktop
+#   scp  /home/mt/MATLAB/tmp1/* $user@$ip:$adres ;;
+# 
+# esac
+# 
+# exit
+# 
+# fi
+# 
+# 
+# 
+# existenceofslash=`echo $1 | grep "/" | wc -l`
+#   if [ $existenceofslash = "1" ]; then
+#   cd $1
+#   matlab -nosplash  -desktop
+#   exit
+#     else 
+#     existenceofmfile=`echo $1 | grep ".m" | wc -l`
+#     if [ $existenceofmfile = "1" ]; then
+#     dosya=`echo "$1 " | awk -F ".m "  '{print $1}'`
+#     echo "exit %deletethis" >> $1
+#     matlab  -nodisplay -r $dosya
+#     sed "/deletethis/d" <  $1 >  $1.new
+#     mv $1.new $1
+#     exit
+#     fi
+#   fi
+# 
+# existenceofarg1=`echo $1 | grep "/" | wc -l`
+#   if [ $existenceofarg1 = "0" ]; then
+#    matlab -nodisplay
+#   fi
+# # 
+# #     cd $i
+# #     matlab -desktop -nosplash
+# # else
+# # dosya=`echo $1 | awk -F ".m"  '{print $1}'`
+# # matlab  -nodisplay -r $dosya 
+# # fi

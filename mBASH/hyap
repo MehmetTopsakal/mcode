@@ -1,0 +1,11 @@
+adres=`pwd`
+
+for i in $(for i in * ; do if [ -d $i ]; then echo $i ; fi ; done) ; do
+cd $adres/$i
+
+$1
+$2
+$3
+$4
+
+done

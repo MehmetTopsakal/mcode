@@ -1,0 +1,2 @@
+echo " LSTOP = .TRUE." > STOPCAR
+> STOPCAR_yapildi

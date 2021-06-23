@@ -1,0 +1,24 @@
+mpot, nph, ntitle, ihole, ipr1, iafolp, ixc,ispec
+   1   4   1   1   1   0   0   1
+nmix, nohole, jumprm, inters, nscmt, icoul, lfms1, iunf
+   1  -1   0   0 100   0   0   0
+xx                                                                              
+gamach, rgrd, ca1, ecv, totvol, rfms1, corval_emin
+      1.57592      0.05000      0.20000    -40.00000      0.00000      8.00000    -70.00000
+ iz, lmaxsc, xnatph, xion, folp
+   28    2      1.00000      0.00000      1.15000
+   28    2    200.00000      0.00000      1.15000
+   30    2   5400.00000      0.00000      1.15000
+   19    2   4400.00000      0.00000      1.15000
+   17    2  15600.00000      0.00000      1.15000
+ExternalPot switch, StartFromFile switch
+ F F
+OVERLAP option: novr(iph)
+   0   0   0   0   0
+ iphovr  nnovr rovr 
+ChSh_Type:
+   0
+ConfigType:
+   1
+Temperature (in eV):
+  0.000000000000000E+000           1

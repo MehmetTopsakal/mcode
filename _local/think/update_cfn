@@ -1,0 +1,7 @@
+rsync -avz --delete /home/mt/mBOX/scripts/* /home/mt/Dropbox/distributed/scripts/
+rsync -avz --delete /home/mt/mBOX/programs/* /home/mt/Dropbox/distributed/programs/
+rsync -avz --delete /home/mt/mBOX/mvariables /home/mt/Dropbox/distributed/mvariables
+
+rsync -avz --delete /home/mt/.pseudo/* mtopsakal@nano.bnl.gov:/home1/mtopsakal/.pseudo
+rsync -avz --delete /home/mt/Dropbox/distributed/* mtopsakal@nano.bnl.gov:/home1/mtopsakal/Dropbox/distributed
+

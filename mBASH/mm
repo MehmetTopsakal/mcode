@@ -1,0 +1,52 @@
+#!/bin/bash
+
+cmnd='from math import *; print('$*')'
+# echo $cmnd
+python -c 'from math import *; print('$*')'
+
+#import sys
+
+#from math import *
+#print(sys.argv)
+
+#import sys, os
+
+#inputs = sys.argv
+#ilen   = len(inputs)
+
+
+#if ilen == 1:
+    ##print 'input file is missing'   
+    #print('USAGE : mm $number1 $operation $number2')
+    #sys.exit(1)
+#if ilen == 2:
+    ##print 'input pattern is missing'    
+    #print('USAGE : mm $number1 $operation $number2')
+    #sys.exit(1)
+#if ilen == 3:
+    ##print 'output pattern is missing' 
+    #print('USAGE : mm $number1 $operation $number2')
+    #inputs.extend(['10'])
+
+#number1 = inputs[1]
+#operation = inputs[2]
+#number2 = inputs[3]
+
+
+#if operation == '+':
+    #out = float(number1)+float(number2)
+
+#if operation == '-':
+    #out = float(number1)-float(number2)  
+
+#if operation == '*':
+    #out = float(number1)*float(number2)
+
+#if operation == '/':
+    #out = float(number1)/float(number2)   
+    
+    
+
+
+#print('%.4f' %(out))
+

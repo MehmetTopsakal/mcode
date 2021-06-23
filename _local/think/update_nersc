@@ -1,0 +1,6 @@
+rsync -avz --delete /home/mt/mBOX/scripts/* /home/mt/Dropbox/distributed/scripts/
+rsync -avz --delete /home/mt/mBOX/programs/* /home/mt/Dropbox/distributed/programs/
+rsync -avz --delete /home/mt/mBOX/mvariables /home/mt/Dropbox/distributed/mvariables
+
+
+rsync -avz --delete /home/mt/Dropbox/distributed/* topsakal@edison.nersc.gov:/global/u2/t/topsakal/Dropbox/distributed

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# USAGE : qvasp $jobname $queue $ncpu $hour $min 
+
+# if [ -z "$6" ]; then  kpar=1               ; else  kpar=$6    ; fi
+# if [ -z "$5" ]; then  min=55               ; else  min=$5    ; fi
+# if [ -z "$4" ]; then  hour=01              ; else  hour=$4    ; fi
+# if [ -z "$3" ]; then  ncpu=64              ; else  ncpu=$3    ; fi
+# if [ -z "$2" ]; then  queue=devel          ; else  queue=$2     ; fi
+if [ -z "$1" ]; then  foldername=tmp         ; else  foldername=$1   ; fi
+
+
+mkdir $foldername.tmpsaved
+cp -v $foldername/pwscf.paw  $foldername/pwscf.occup  $foldername.tmpsaved
+mkdir $foldername.tmpsaved/pwscf.save
+cp -v $foldername/pwscf.save/*  $foldername.tmpsaved/pwscf.save
+
+

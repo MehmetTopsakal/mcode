@@ -1,0 +1,8 @@
+#!/bin/bash
+
+file_to_tar=$1
+
+rm -rf $file_to_tar.tgz   1>/dev/null 2>/dev/null
+find . -maxdepth 1  -name $file_to_tar | xargs tar -zcvf $file_to_tar.tgz  1>/dev/null 2>/dev/null
+
+if [ "$2" = "r" ]; then rm -rf $file_to_tar ; fi

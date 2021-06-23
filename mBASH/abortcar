@@ -1,0 +1,2 @@
+echo " LABORT = .TRUE." > STOPCAR
+> ABORTCAR_yapildi

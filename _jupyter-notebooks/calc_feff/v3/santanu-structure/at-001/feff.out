@@ -1,0 +1,346 @@
+### feff starts at Fri 05 Feb 2021 12:06:48 PM EST
+### Parallel version (ifort)
+ 
+Launching FEFF version FEFF 9.9.1
+Core hole lifetime is   1.576 eV.
+Your calculation:
+ xx
+Ni K edge XANES using FSR corehole.
+Using:     * Self-Consistent Field potentials
+Using cards:   ATOMS CONTROL EXCHANGE TITLE PRINT POTENTIALS XANES EDGE SCF FMS S02
+
+Calculating atomic potentials ...
+    overlapped atomic potential and density for unique potential    0
+    overlapped atomic potential and density for unique potential    1
+    overlapped atomic potential and density for unique potential    2
+    overlapped atomic potential and density for unique potential    3
+    overlapped atomic potential and density for unique potential    4
+Done with module: atomic potentials.
+
+Calculating SCF potentials ...
+FEFF-MPI using     4 parallel threads.
+ xntot is:    215611.000000000     
+Muffin tin radii and interstitial parameters [bohr]:
+type, norman radius, muffin tin, overlap factor
+    0  1.51303E+00  1.31088E+00  1.15000E+00
+    1  1.53345E+00  1.33517E+00  1.15000E+00
+    2  1.52246E+00  1.33365E+00  1.15000E+00
+    3  2.20193E+00  2.10382E+00  1.12210E+00
+    4  1.55270E+00  1.38980E+00  1.15000E+00
+ xntot is:    215611.000000000     
+ xntot is:    215611.000000000     
+ xntot is:    215611.000000000     
+Core-valence separation energy:  ecv=   -41.000 eV
+Initial Fermi level:              mu=    -1.927 eV
+SCF ITERATION NUMBER  1
+     point #   1  energy = -41.000
+FMS for a cluster of   46 atoms around atom type   0
+FMS for a cluster of   51 atoms around atom type   1
+FMS for a cluster of   46 atoms around atom type   2
+FMS for a cluster of   53 atoms around atom type   3
+FMS for a cluster of   45 atoms around atom type   4
+     point #  20  energy = -29.936
+     point #  40  energy =  -9.820
+New Fermi level:    mu=  -6.803 eV  Charge distance=  0.3095 (partial c.d.= 10.1354)
+SCF ITERATION NUMBER  2
+     point #   1  energy = -41.000
+     point #  20  energy = -29.936
+     point #  40  energy =  -9.820
+New Fermi level:    mu=  -6.803 eV  Charge distance=  0.4287 (partial c.d.=  6.8471)
+SCF ITERATION NUMBER  3
+     point #   1  energy = -41.000
+     point #  20  energy = -29.936
+     point #  40  energy =  -9.820
+     point #  60  energy =  -6.815
+New Fermi level:    mu=  -7.029 eV  Charge distance=  0.0675 (partial c.d.=  6.9760)
+SCF ITERATION NUMBER  4
+     point #   1  energy = -41.000
+     point #  20  energy = -30.009
+     point #  40  energy = -10.026
+     point #  60  energy =  -7.041
+New Fermi level:    mu=  -7.048 eV  Charge distance=  0.2107 (partial c.d.=  0.0233)
+SCF ITERATION NUMBER  5
+     point #   1  energy = -41.000
+     point #  20  energy = -30.016
+     point #  40  energy = -10.044
+New Fermi level:    mu=  -7.048 eV  Charge distance=  0.1170 (partial c.d.=  0.0358)
+SCF ITERATION NUMBER  6
+     point #   1  energy = -41.000
+     point #  20  energy = -30.016
+     point #  40  energy = -10.044
+New Fermi level:    mu=  -7.048 eV  Charge distance=  0.5214 (partial c.d.=  0.0753)
+SCF ITERATION NUMBER  7
+     point #   1  energy = -41.000
+     point #  20  energy = -30.016
+     point #  40  energy = -10.044
+     point #  60  energy =  -7.036
+     point #  80  energy =  -6.786
+     point # 100  energy =  -6.536
+New Fermi level:    mu=  -6.401 eV  Charge distance=  0.4294 (partial c.d.=  7.1442)
+SCF ITERATION NUMBER  8
+     point #   1  energy = -41.000
+     point #  20  energy = -29.806
+     point #  40  energy =  -9.454
+     point #  60  energy =  -6.414
+     point #  80  energy =  -6.664
+     point # 100  energy =  -6.914
+New Fermi level:    mu=  -7.030 eV  Charge distance=  0.0627 (partial c.d.=  7.0979)
+SCF ITERATION NUMBER  9
+     point #   1  energy = -41.000
+     point #  20  energy = -30.010
+     point #  40  energy = -10.028
+     point #  60  energy =  -7.043
+New Fermi level:    mu=  -7.040 eV  Charge distance=  0.6884 (partial c.d.=  0.0362)
+SCF ITERATION NUMBER 10
+     point #   1  energy = -41.000
+     point #  20  energy = -30.013
+     point #  40  energy = -10.036
+     point #  60  energy =  -7.027
+     point #  80  energy =  -6.777
+     point # 100  energy =  -6.527
+     point # 120  energy =  -6.277
+New Fermi level:    mu=  -6.265 eV  Charge distance=  0.5913 (partial c.d.=  8.9729)
+SCF ITERATION NUMBER 11
+     point #   1  energy = -41.000
+     point #  20  energy = -29.762
+     point #  40  energy =  -9.330
+     point #  60  energy =  -6.277
+     point #  80  energy =  -6.527
+     point # 100  energy =  -6.777
+     point # 120  energy =  -7.027
+New Fermi level:    mu=  -7.018 eV  Charge distance=  0.0737 (partial c.d.=  8.9064)
+SCF ITERATION NUMBER 12
+     point #   1  energy = -41.000
+     point #  20  energy = -30.006
+     point #  40  energy = -10.017
+New Fermi level:    mu=  -7.018 eV  Charge distance=  0.4503 (partial c.d.=  0.0595)
+SCF ITERATION NUMBER 13
+     point #   1  energy = -41.000
+     point #  20  energy = -30.006
+     point #  40  energy = -10.017
+     point #  60  energy =  -7.006
+     point #  80  energy =  -6.756
+     point # 100  energy =  -6.506
+New Fermi level:    mu=  -6.435 eV  Charge distance=  0.3879 (partial c.d.=  6.0571)
+SCF ITERATION NUMBER 14
+     point #   1  energy = -41.000
+     point #  20  energy = -29.817
+     point #  40  energy =  -9.485
+     point #  60  energy =  -6.448
+     point #  80  energy =  -6.698
+     point # 100  energy =  -6.948
+New Fermi level:    mu=  -6.996 eV  Charge distance=  0.0492 (partial c.d.=  5.9979)
+SCF ITERATION NUMBER 15
+     point #   1  energy = -41.000
+     point #  20  energy = -29.999
+     point #  40  energy =  -9.996
+     point #  60  energy =  -7.008
+New Fermi level:    mu=  -6.997 eV  Charge distance=  0.3581 (partial c.d.=  0.0464)
+SCF ITERATION NUMBER 16
+     point #   1  energy = -41.000
+     point #  20  energy = -29.999
+     point #  40  energy =  -9.997
+     point #  60  energy =  -6.984
+     point #  80  energy =  -6.734
+New Fermi level:    mu=  -6.583 eV  Charge distance=  0.3010 (partial c.d.=  4.1563)
+SCF ITERATION NUMBER 17
+     point #   1  energy = -41.000
+     point #  20  energy = -29.865
+     point #  40  energy =  -9.619
+     point #  60  energy =  -6.595
+     point #  80  energy =  -6.845
+New Fermi level:    mu=  -6.981 eV  Charge distance=  0.0422 (partial c.d.=  4.0792)
+SCF ITERATION NUMBER 18
+     point #   1  energy = -41.000
+     point #  20  energy = -29.994
+     point #  40  energy =  -9.982
+     point #  60  energy =  -6.993
+New Fermi level:    mu=  -6.981 eV  Charge distance=  0.2501 (partial c.d.=  0.0518)
+SCF ITERATION NUMBER 19
+     point #   1  energy = -41.000
+     point #  20  energy = -29.994
+     point #  40  energy =  -9.983
+     point #  60  energy =  -6.969
+     point #  80  energy =  -6.719
+New Fermi level:    mu=  -6.730 eV  Charge distance=  0.1986 (partial c.d.=  2.4565)
+SCF ITERATION NUMBER 20
+     point #   1  energy = -41.000
+     point #  20  energy = -29.913
+     point #  40  energy =  -9.754
+     point #  60  energy =  -6.742
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0343 (partial c.d.=  2.3557)
+SCF ITERATION NUMBER 21
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.1149 (partial c.d.=  0.0682)
+SCF ITERATION NUMBER 22
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0946 (partial c.d.=  1.9618)
+SCF ITERATION NUMBER 23
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0121 (partial c.d.=  1.8956)
+SCF ITERATION NUMBER 24
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0499 (partial c.d.=  0.0443)
+SCF ITERATION NUMBER 25
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0283 (partial c.d.=  0.4508)
+SCF ITERATION NUMBER 26
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0064 (partial c.d.=  0.3333)
+SCF ITERATION NUMBER 27
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0025 (partial c.d.=  0.0524)
+SCF ITERATION NUMBER 28
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0004 (partial c.d.=  0.0248)
+SCF ITERATION NUMBER 29
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0001 (partial c.d.=  0.0028)
+SCF ITERATION NUMBER 30
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0002 (partial c.d.=  0.0004)
+SCF ITERATION NUMBER 31
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0000 (partial c.d.=  0.0007)
+SCF ITERATION NUMBER 32
+     point #   1  energy = -41.000
+     point #  20  energy = -29.989
+     point #  40  energy =  -9.970
+New Fermi level:    mu=  -6.967 eV  Charge distance=  0.0002 (partial c.d.=  0.0001)
+Electronic configuration
+  type     l     N_el
+     0     0    0.640
+     0     1    0.818
+     0     2    9.959
+     0     3    0.000
+     1     0    0.612
+     1     1    0.784
+     1     2    9.210
+     1     3    0.000
+     2     0    0.792
+     2     1    0.858
+     2     2   10.233
+     2     3    0.000
+     3     0    2.187
+     3     1    6.230
+     3     2    0.249
+     3     3    0.000
+     4     0    1.953
+     4     1    5.040
+     4     2    0.134
+     4     3    0.000
+Charge transfer:  type  charge
+       0    0.416
+       1    0.606
+       2   -0.117
+       3   -0.333
+       4    0.127
+Convergence reached in   32 iterations.
+total time        307.6738s          (communication time     0.2081E+01s)
+Done with module: potentials.
+
+Calculating cross-section and phases ...
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 0 PID 55249 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 11 (Segmentation fault)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 55250 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 55251 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 55252 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+ CHOPEN
+ Abnormal termination on processor            1
+MKGTR: Tracing over Green's function ...
+ Error opening file, phase.bin in module rdxsph
+ Fatal error
+CHOPEN
+Pathfinder: finding scattering paths...
+Preparing plane wave scattering amplitudes
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 0 PID 55296 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 11 (Segmentation fault)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 55297 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 55298 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 55299 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+Calculating EXAFS parameters ...
+ Error opening file, phase.bin in module rdxsph
+ Fatal error
+CHOPEN
+Calculating XAS spectra ...
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 55323 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 55324 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 55325 RUNNING AT xf28idd-ws9
+=   KILLED BY SIGNAL: 9 (Killed)
+===================================================================================
+ 
+### feff ends at Fri 05 Feb 2021 12:12:05 PM EST
+ 

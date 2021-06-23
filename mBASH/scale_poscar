@@ -1,0 +1,141 @@
+#!/bin/sh
+
+
+
+case $4 in
+
+  x | X  )
+
+  oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  poscar_carpan=`awk "NR==2" $1 | awk '{print $1}'`
+  poscar_x=`awk "NR==3" $1   | awk -v varx="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  poscar_y=`awk "NR==4" $1   | awk -v vary="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  poscar_z=`awk "NR==5" $1   | awk -v varz="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+
+  echo "scaled
+  $poscar_carpan 
+  $poscar_x
+  $poscar_y
+  $poscar_z
+  `awk "NR>=6" $1`
+  " > $1.$2.$3.$oran
+cat $1.$2.$3.$oran
+  ;;
+
+  y | Y )
+
+  oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  poscar_carpan=`awk "NR==2" $1 | awk '{print $1}'`
+  poscar_x=`awk "NR==3" $1   | awk -v varx="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  poscar_y=`awk "NR==4" $1   | awk -v vary="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  poscar_z=`awk "NR==5" $1   | awk -v varz="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+
+  echo "scaled
+  $poscar_carpan 
+  $poscar_x
+  $poscar_y
+  $poscar_z
+  `awk "NR>=6" $1`
+  " > $1.$2.$3.$oran
+cat $1.$2.$3.$oran
+  ;;
+
+  z | Z  )
+
+  oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  poscar_carpan=`awk "NR==2" $1 | awk '{print $1}'`
+  poscar_x=`awk "NR==3" $1   | awk -v varx="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  poscar_y=`awk "NR==4" $1   | awk -v vary="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  poscar_z=`awk "NR==5" $1   | awk -v varz="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+
+  echo "scaled
+  $poscar_carpan 
+  $poscar_x
+  $poscar_y
+  $poscar_z
+  `awk "NR>=6" $1`
+  " > $1.$2.$3.$oran
+cat $1.$2.$3.$oran
+  ;;
+
+
+  xy | XY )
+
+  oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  poscar_carpan=`awk "NR==2" $1 | awk '{print $1}'`
+  poscar_x=`awk "NR==3" $1   | awk -v varx="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  poscar_y=`awk "NR==4" $1   | awk -v vary="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  poscar_z=`awk "NR==5" $1   | awk -v varz="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+
+  echo "scaled
+  $poscar_carpan 
+  $poscar_x
+  $poscar_y
+  $poscar_z
+  `awk "NR>=6" $1`
+  " > $1.$2.$3.$oran
+cat $1.$2.$3.$oran
+  ;;
+
+
+  xyz | XYZ )
+
+  oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  poscar_carpan=`awk "NR==2" $1 | awk '{print $1}'`
+  poscar_x=`awk "NR==3" $1   | awk -v varx="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  poscar_y=`awk "NR==4" $1   | awk -v vary="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  poscar_z=`awk "NR==5" $1   | awk -v varz="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+
+  echo "scaled
+  $poscar_carpan 
+  $poscar_x
+  $poscar_y
+  $poscar_z
+  `awk "NR>=6" $1`
+  " > $1.$2.$3.$oran
+cat $1.$2.$3.$oran
+  ;;
+
+
+  -c | -a | a* | c*  )
+
+  oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  poscar_carpan=`awk "NR==2" $1 | awk -v varc="$oran"  '{printf("%.10f \t",varc*$1)}'`
+  poscar_x=`awk "NR==3" $1   | awk -v varx="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  poscar_y=`awk "NR==4" $1   | awk -v vary="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  poscar_z=`awk "NR==5" $1   | awk -v varz="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+
+  echo "scaled
+  $poscar_carpan 
+  $poscar_x
+  $poscar_y
+  $poscar_z
+  `awk "NR>=6" $1`
+  " > $1.$2.$3.$oran
+cat $1.$2.$3.$oran
+  ;;
+
+  * )
+  echo "scale etme yonunu girmelisin"  > error.txt
+  #   oran=`echo null | awk -v new="$3" -v ref="$2" '{printf("%.4f",(new/ref))}'`
+  #   poscar_carpan=`awk "NR==2" $1 | awk '{print $1}'`
+  #   poscar_x=`awk "NR==3" $1   | awk -v varx="$oran" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varx*$1),(varx*$2),(varx*$3))}'`
+  #   poscar_y=`awk "NR==4" $1   | awk -v vary="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(vary*$1),(vary*$2),(vary*$3))}'`
+  #   poscar_z=`awk "NR==5" $1   | awk -v varz="1" '{printf("%.10f \t" "\t%.10f \t" "\t%.10f",(varz*$1),(varz*$2),(varz*$3))}'`
+  # 
+  #   echo "scaled
+  #   $poscar_carpan 
+  #   $poscar_x
+  #   $poscar_y
+  #   $poscar_z
+  #   `awk "NR>=6" $1`
+  #   " > $1.$2.$3.$oran
+  # cat $1.$2.$3.$oran
+  ;;
+  
+
+
+esac
+
+
+  

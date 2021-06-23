@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+
+adres=`pwd`
+
+case $1 in
+
+
+old | o )
+
+f_loop=`ls -l | awk '{print $1 "  "$NF}' | grep dr | awk '{print $2}' | sort -n`
+
+
+    echo %Folder"  "ENERGY"      "dE"  "stage"  "NSW"   "a"         "b"         "c"         "PRESSURE"  " MAGMOM"  ENCUT" > $adres/total-analiz.dat
+for i in $f_loop; do
+    cd $adres/$i ; echo "CURRENT ADRESS is : `pwd`"
+	    folder=$i
+	    oszicar=`grep F OSZICAR* | awk 'END{print}'`
+	      stage=`echo $oszicar | awk  '{print $1}'`
+	      ENERGY=`echo $oszicar | awk  '{printf("%.8f",$5)}'` ; 
+	      if [[ "$ENERGY" = "0.00000000" ]]; then folder="% $i de ENERGY bilgisi YOK ..."; 
+	      echo $folder >> $adres/total-analiz.dat ; continue ; fi
+	      dE=`echo $oszicar | awk  '{print $8}' | awk -F "E" '{print $2}' `
+	      MAGMOM=`echo $oszicar | awk  '{printf("%.4f",$10)}'`
+	      NSW=`grep NSW OUTCAR | awk '{print $3}'`
+	      ENCUT=`grep ENCUT OUTCAR | awk '{print $3}'`
+	    PRESSURE=`grep 'external pressure' OUTCAR* | awk 'END{print}' | awk  '{printf("%.3f",$4)}' `
+#	    VOLUME=`grep 'volume of cell' OUTCAR* | awk 'END{print}' | awk  '{printf("%.2f",$5)}' `
+	    vectors=`awk '/length of vectors/,/FORCES acting on ions/' OUTCAR* | tail -n 4 | awk "NR==1"`
+	    a=`echo $vectors | awk  '{printf("%.9f",$1)}' ` 
+	    b=`echo $vectors | awk  '{printf("%.9f",$2)}' `
+	    c=`echo $vectors | awk  '{printf("%.9f",$3)}' `
+#	    bandgap=`getband`
+    echo $folder$' \t'$ENERGY"   "$dE"    "$stage$' \t'$NSW"    "$a$"  "$b"  "$c"  "$PRESSURE$'\t'$MAGMOM"   "$ENCUT >> $adres/total-analiz.dat
+done 
+exit
+;;
+
+
+hazir | ready | r | h )
+
+# 
+if [ -f "total-analiz.dat" ]; then
+echo ""
+else
+echo ""
+echo "ERROR !!!! No total-analiz.dat file here. "
+echo ""
+exit
+fi
+
+;;
+
+fast | f )
+
+f_loop=`ls -l | awk '{print $1 "  "$NF}' | grep dr | awk '{print $2}' | sort -n`
+
+
+    echo '%1-E0  %2-dE  %3-step  %4-NSW  %5-a  %6-b  %7-c   %8-V  %9  %10-FOLDER  %11-Pressure' > $adres/total-analiz.dat
+for i in $f_loop; do
+    cd $adres/$i ; echo "CURRENT ADRESS is : `pwd`"
+	    folder=$i
+	    oszicar=`grep F OSZICAR* | awk 'END{print}'`
+	      stage=`echo $oszicar | awk  '{print $1}'`
+	      ENERGY=`echo $oszicar | awk  '{printf("%.6f",$5)}'` ; 
+	      if [[ "$ENERGY" = "0.000000" ]]; then folder="% %$i %does_not_contain_energy_information..."; 
+	      echo $folder >> $adres/total-analiz.dat ; continue ; fi
+	      dE=`echo $oszicar | awk  '{print $8}' | awk -F "E" '{print $2}' `
+	      NSW=0 #`grep NSW INCAR | awk '{print $NF}' | awk '{print ($1*1)}' `
+	    PRESSURE=0 #`grep 'external pressure' OUTCAR* | awk 'END{print}' | awk  '{printf("%.3f",$4)}' `
+	    #VOLUME=0 #`grep 'volume of cell' OUTCAR* | awk 'END{print}' | awk  '{printf("%.2f",$5)}' `
+	    VOLUME=0 #`grep 'volume of cell' OUTCAR* | awk 'END{print}' | awk  '{printf("%.2f",$5)}' `
+	    vectors=`awk '/length of vectors/,/FORCES acting on ions/' OUTCAR* | tail -n 4 | awk "NR==1"`
+	    a=`echo $vectors | awk  '{printf("%.6f",$1)}' ` 
+	    b=`echo $vectors | awk  '{printf("%.6f",$2)}' `
+	    c=`echo $vectors | awk  '{printf("%.4f",$3)}' `
+#	    bandgap=`getband`
+    echo $ENERGY"   "$dE"  "$stage$'\t' $NSW"  "$a$" "$b" "$c" "$VOLUME"  % "$folder$' \t'$PRESSURE$'    ' >> $adres/total-analiz.dat
+done
+
+;;
+
+
+* )
+
+f_loop=`ls -l | awk '{print $1 "  "$NF}' | grep dr | awk '{print $2}' | sort -n`
+
+
+    echo '%1-E0  %2-dE  %3-step  %4-NSW  %5-a  %6-b  %7-c   %8-V  %9  %10-FOLDER  %11-P' > $adres/total-analiz.dat
+for i in $f_loop; do
+    cd $adres/$i ; echo "CURRENT ADRESS is : `pwd`"
+	    folder=$i
+	    oszicar=`grep F OSZICAR* | awk 'END{print}'`
+	      stage=`echo $oszicar | awk  '{print $1}'`
+	      ENERGY=`echo $oszicar | awk  '{printf("%.6f",$5)}'` ; 
+	      if [[ "$ENERGY" = "0.000000" ]]; then folder="% %$i %does_not_contain_energy_information..."; 
+	      echo $folder >> $adres/total-analiz.dat ; continue ; fi
+	      dE=`echo $oszicar | awk  '{print $8}' | awk -F "E" '{print $2}' `
+	      NSW=`grep NSW INCAR | awk '{print $NF}' | awk '{print ($1*1)}' `
+	    PRESSURE=`grep 'external pressure' OUTCAR* | awk 'END{print}' | awk  '{printf("%.3f",$4)}' `
+	    #VOLUME=0 #`grep 'volume of cell' OUTCAR* | awk 'END{print}' | awk  '{printf("%.2f",$5)}' `
+	    VOLUME=`grep 'volume of cell' OUTCAR* | awk 'END{print}' | awk  '{printf("%.2f",$5)}' `
+	    vectors=`awk '/length of vectors/,/FORCES acting on ions/' OUTCAR* | tail -n 4 | awk "NR==1"`
+	    a=`echo $vectors | awk  '{printf("%.6f",$1)}' ` 
+	    b=`echo $vectors | awk  '{printf("%.6f",$2)}' `
+	    c=`echo $vectors | awk  '{printf("%.4f",$3)}' `
+#	    bandgap=`getband`
+    echo $ENERGY"   "$dE"  "$stage$'\t' $NSW"  "$a$" "$b" "$c" "$VOLUME"  % "$folder$' \t'$PRESSURE$'    ' >> $adres/total-analiz.dat
+done
+
+;;
+
+
+esac
+
+
+echo ''
+
+cd $adres
+
+emin=`cat total-analiz.dat | awk "NF==11" | awk "NR>1" | awk '{print $1}' | sort -n | awk "NR==1"`
+emax=`cat total-analiz.dat | awk "NF==11" | awk "NR>1" | awk '{print $1}' | sort -n | awk 'END{print}'`
+diff=`echo $emin - $emax | bc -l`
+step=`echo $diff / -60 | bc -l`
+
+
+size=`cat total-analiz.dat | awk "NF==11" | awk "NR>1" | wc -l`
+
+echo "i     folder    E_rel   "
+
+for i in `echo $size | awk -v s="$size" '{ for (i = 1; i <= s; i++) printf("%d ", i ) }'`
+do
+
+energy=`cat total-analiz.dat | awk "NF==11" | awk "NR>1" | awk '{print $1}' | awk "NR==$i" | awk -v min="$emin" '{printf("%.4f \n",($1-min))}'` 
+folder=`cat total-analiz.dat | awk "NF==11" | awk "NR>1" | awk '{print $10}' | awk "NR==$i" `
+
+# echo $i$' \t'`echo "$folder       " | cut -c 1-7`$' \t'$energy$' \t' `echo $energy $step | awk '{ energy = $1 ; step = $2 ; while ( energy >= 0 ) { plota = 1 ; printf "%d" ,plota ; energy = energy - step }  }'`
+echo   `echo "$i ________________ " | cut -c 1-9`      `echo "$folder __________________________ " | cut -c 1-20`       `echo "$energy"`      `echo $energy $step | awk '{ energy = $1 ; step = $2 ; while ( energy >= 0 ) { plota = 1 ; printf "%d" ,plota ; energy = energy - step }  }'`
+
+
+done
+echo "i     folder    E_rel   "
+echo ''

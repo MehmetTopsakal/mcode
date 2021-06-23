@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if [ -z "$3" ]; then  coly=2       ; else  coly=$3  ; fi
+if [ -z "$2" ]; then  colx=1       ; else  colx=$2  ; fi
+if [ -z "$1" ]; then  file=*.dat   ; else  file=$1  ; fi
+
+
+ymin=`cat $file | awk -v coly=$coly '{print $coly}' | sort -n | awk "NR==1"`
+ymax=`cat $file | awk -v coly=$coly '{print $coly}' | sort -n | awk 'END{print}'`
+diff=`echo $ymin - $ymax | bc -l`
+step=`echo $diff / -60 | bc -l`
+
+
+size=`cat $file | wc -l`
+
+echo "i ----- colx ------ diff -------- plot --- "
+
+for i in `echo $size | awk -v s="$size" '{ for (i = 1; i <= s; i++) printf("%d ", i ) }'`
+do
+
+folder=`cat $file | awk -v colx=$colx '{print $colx}' | awk "NR==$i" | awk '{print $1}' ` 
+energy=`cat $file | awk -v coly=$coly '{print $coly}' | awk "NR==$i" | awk -v min="$ymin" '{printf("%.4f \n",($1-min))}' | awk '{print $1}' ` 
+
+echo $i$' \t'$folder$' \t'$energy$' \t' `echo $energy $step | awk '{ energy = $1 ; step = $2 ; while ( energy >= 0 ) { plota = 1 ; printf "%d" ,plota ; energy = energy - step }  }'`
+
+done
+echo "i ----- colx ------ diff -------- plot --- "
+echo ''

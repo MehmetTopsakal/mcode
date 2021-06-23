@@ -1,0 +1,506 @@
+#!/bin/bash --noprofile
+
+case $1 in
+
+# ###################################################################################
+# itasca | it | msi ) ###########################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/wentzcov/ ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/wentzcov/ | wc -l` = "1" ]] ; then echo "
+# /home/wentzcov is ALREADY MOUNTED !!!! 
+# " 
+# else 
+# if test -d /home/wentzcov/
+# then 
+# sshfs -o cache=no topsakal@login.msi.umn.edu:/home/wentzcov/ /home/wentzcov/
+# # sshfs topsakal@login.msi.umn.edu:/lustre/topsakal /lustre/topsakal
+# else echo "/home/wentzcov/ does NOT exist !!!" 
+# exit
+# fi
+# fi
+# ;;
+
+
+
+###################################################################################
+ic-h ) ###########################################################
+if [[ $2 = u ]] ; 
+then 
+
+sudo umount /sdcc/u/mtopsakal ; 
+ 
+
+df -h ; exit ; fi
+if [[ `df -h  | grep /sdcc/u/mtopsakal | wc -l` = "1" ]] ; then echo "
+/sdcc/u/mtopsakal is ALREADY MOUNTED !!!! 
+" 
+
+else 
+if test -d /sdcc/u/mtopsakal
+then 
+
+# sshfs -o uid=1001,gid=1002,cache=no   mtopsakal@nano.bnl.gov:/work/mtopsakal /work/mtopsakal
+# sshfs -o workaround=truncate:rename mtopsakal@nano.bnl.gov:/work/mtopsakal /work/mtopsakal
+sshfs mtopsakal@rftpexp.rhic.bnl.gov:/sdcc/u/mtopsakal /sdcc/u/mtopsakal
+
+else echo "/sdcc/u/mtopsakal does NOT exist !!!" 
+exit
+fi
+fi
+;;
+
+
+
+###################################################################################
+ic ) ###########################################################
+if [[ $2 = u ]] ; 
+then 
+
+sudo umount /hpcgpfs01/scratch/mtopsakal ; 
+ 
+
+df -h ; exit ; fi
+if [[ `df -h  | grep /hpcgpfs01/scratch/mtopsakal | wc -l` = "1" ]] ; then echo "
+/sdcc/u/mtopsakal is ALREADY MOUNTED !!!! 
+" 
+
+else 
+if test -d /hpcgpfs01/scratch/mtopsakal
+then 
+
+# sshfs -o uid=1001,gid=1002,cache=no   mtopsakal@nano.bnl.gov:/work/mtopsakal /work/mtopsakal
+# sshfs -o workaround=truncate:rename mtopsakal@nano.bnl.gov:/work/mtopsakal /work/mtopsakal
+sshfs mtopsakal@rftpexp.rhic.bnl.gov:/hpcgpfs01/scratch/mtopsakal /hpcgpfs01/scratch/mtopsakal
+
+else echo "/hpcgpfs01/scratch/mtopsakal does NOT exist !!!" 
+exit
+fi
+fi
+;;
+
+
+
+
+###################################################################################
+n | nersc ) ###########################################################
+if [[ $2 = u ]] ; 
+then 
+
+sudo umount /project/projectdirs/m1409/mt ; 
+sudo umount /project/projectdirs/m1409/mt ; 
+sudo umount /global/u2/t/topsakal         ;
+
+df -h ; exit ; fi
+if [[ `df -h  | grep /project/projectdirs/m1409/mt | wc -l` = "1" ]] ; then echo "
+/project/projectdirs/m1409/mt is ALREADY MOUNTED !!!! 
+" 
+
+else 
+if test -d /project/projectdirs/m1409/mt
+then 
+
+sshfs -o cache=no   topsakal@cori.nersc.gov:/project/projectdirs/m1409/mt /project/projectdirs/m1409/mt
+sshfs -o cache=no   topsakal@cori.nersc.gov:/global/cscratch1/sd/topsakal /global/cscratch1/sd/topsakal
+sshfs -o cache=no   topsakal@cori.nersc.gov:/global/u2/t/topsakal /global/u2/t/topsakal
+else echo "/project/projectdirs/m1409/mt does NOT exist !!!" 
+exit
+fi
+fi
+;;
+
+
+
+
+
+###################################################################################
+k | kbase ) ###########################################################
+if [[ $2 = u ]] ; 
+then 
+
+sudo umount /home/mtopsakal
+ 
+
+df -h ; exit ; fi
+if [[ `df -h  | grep /home/mtopsakal | wc -l` = "1" ]] ; then echo "
+/global/u2/t/topsakal is ALREADY MOUNTED !!!! 
+" 
+
+else 
+if test -d /home/mtopsakal
+then 
+
+ssh-agent > "$HOME/.sshagent.conf"
+ssh-add $HOME/.ssh/key1/id_rsa
+sshfs -o cache=no mtopsakal@login.newyork.kbase.us:/home/mtopsakal /home/mtopsakal
+
+else echo "/home/mtopsakal does NOT exist !!!" 
+exit
+fi
+fi
+;;
+
+
+
+
+
+###################################################################################
+ames ) ###########################################################
+if [[ $2 = u ]] ; 
+then 
+
+sudo umount /data ; 
+ 
+
+df -h ; exit ; fi
+if [[ `df -h  | grep /data | wc -l` = "1" ]] ; then echo "
+/data is ALREADY MOUNTED !!!! 
+" 
+
+else 
+if test -d /data
+then 
+
+sshfs mtopsakal@ames.nnsd.bnl.gov:/data /data
+
+else echo "/data does NOT exist !!!" 
+exit
+fi
+fi
+;;
+
+
+
+esac
+
+
+
+
+
+
+# ###################################################################################
+# ito ) ###########################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/wentzcov/topsakal ; sudo umount /home/wentzcov/shared ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/wentzcov/topsakal | wc -l` = "1" ]] ; then echo "
+# /home/wentzcov is ALREADY MOUNTED !!!! 
+# " 
+# else 
+# if test -d /home/wentzcov/topsakal
+# then 
+# sshfs -o cache=no mt@wentzcovitch-imac.cems.umn.edu:/home/wentzcov/topsakal /home/wentzcov/topsakal
+# sshfs -o cache=no mt@wentzcovitch-imac.cems.umn.edu:/home/wentzcov/shared /home/wentzcov/shared
+# # sshfs topsakal@login.msi.umn.edu:/lustre/topsakal /lustre/topsakal
+# else echo "/home/wentzcov/topsakal does NOT exist !!!" 
+# exit
+# fi
+# fi
+# ;;
+# 
+# ###################################################################################
+# stampede | st ) ###########################################################
+# if [[ $2 = u ]] ; 
+# then 
+# 
+# sudo umount /home1/02479/topsakal ; 
+# sudo umount /work/02479/topsakal ; 
+# sudo umount /scratch/02479/topsakal ; 
+# 
+# df -h ; exit ; fi
+# if [[ `df -h  | grep /home1/02479/topsakal | wc -l` = "1" ]] ; then echo "
+# /home1/02479/topsakal is ALREADY MOUNTED !!!! 
+# " 
+# 
+# else 
+# if test -d /home1/02479/topsakal
+# then 
+# 
+# sshfs -o cache=no topsakal@stampede.tacc.utexas.edu:/home1/02479/topsakal /home1/02479/topsakal
+# sshfs -o cache=no topsakal@stampede.tacc.utexas.edu:/work/02479/topsakal /work/02479/topsakal
+# # sshfs topsakal@stampede.tacc.utexas.edu:/scratch/02479/topsakal /scratch/02479/topsakal
+# 
+# else echo "/home1/02479/topsakal does NOT exist !!!" 
+# exit
+# fi
+# fi
+# ;;
+# 
+# ###################################################################################
+# bluewater | bw ) ###########################################################
+# if [[ $2 = u ]] ; 
+# then 
+# 
+# sudo umount /u/sciteam/mtopsaka ; 
+# 
+# df -h ; exit ; fi
+# if [[ `df -h  | grep /u/sciteam/mtopsaka | wc -l` = "1" ]] ; then echo "
+# /u/sciteam/mtopsaka is ALREADY MOUNTED !!!! 
+# " 
+# 
+# else 
+# if test -d /u/sciteam/mtopsaka
+# then 
+# 
+# sshfs -o cache=no mtopsaka@h2ologin.ncsa.illinois.edu:/u/sciteam/mtopsaka /u/sciteam/mtopsaka
+# sleep 2
+# nohup mmnt.deamon.bw > /dev/null 2> /dev/null &
+# 
+# else echo "/u/sciteam/mtopsaka does NOT exist !!!" 
+# exit
+# fi
+# fi
+# ;;
+# 
+# ###################################################################################
+# bluewaterscratch | bw-s ) ###########################################################
+# if [[ $2 = u ]] ; 
+# then 
+# 
+# sudo umount /scratch/sciteam/mtopsaka/ ; 
+# 
+# df -h ; exit ; fi
+# if [[ `df -h  | grep /scratch/sciteam/mtopsaka/ | wc -l` = "1" ]] ; then echo "
+# /scratch/sciteam/mtopsaka/ is ALREADY MOUNTED !!!! 
+# " 
+# 
+# else 
+# if test -d /u/sciteam/mtopsaka
+# then 
+# 
+# # sshfs mtopsaka@h2ologin.ncsa.illinois.edu:/u/sciteam/mtopsaka /u/sciteam/mtopsaka
+# sshfs -o cache=no mtopsaka@h2ologin.ncsa.illinois.edu:/scratch/sciteam/mtopsaka/ /scratch/sciteam/mtopsaka/
+# sleep 2
+# nohup mmnt.deamon.bw-s > /dev/null 2> /dev/null &
+# 
+# 
+# else echo "/scratch/sciteam/mtopsaka/ does NOT exist !!!" 
+# exit
+# fi
+# fi
+# ;;
+# 
+# ###################################################################################
+# office | o ) ###########################################################
+# if [[ $2 = u ]] ; 
+# then 
+# 
+# sudo umount /home1/02479/topsakal ; 
+# sudo umount /work/02479/topsakal ; 
+# sudo umount /scratch/02479/topsakal ; 
+# 
+# df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt.office/home/mt | wc -l` = "1" ]] ; then echo "
+# /home/mt.office/home/mt is ALREADY MOUNTED !!!! 
+# " 
+# 
+# else 
+# if test -d /home/mt.office/home/mt
+# then 
+# 
+# sshfs -o cache=no mt@mehmet.cems.umn.edu:/home/mt /home/mt.office/home/mt
+# 
+# else echo "/home/mt.office/home/mt does NOT exist !!!" 
+# exit
+# fi
+# fi
+# ;;
+# 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# export remotes_folder="/home/mt/REMOTEs"
+# cd $remotes_folder
+
+
+# case $1 in
+# 
+# ###################################################################################
+# mt-common | mtc | wdm ) ###########################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/wd_mehmet ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/wd_mehmet | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/wd_mehmet is ALREADY MOUNTED !!!! 
+# " 
+# else 
+# if test -d wd_mehmet; then  echo "" ; else mkdir wd_mehmet ; fi
+# #sudo mount -t smbfs -o username=mehmet,password=841066mt //139.179.65.3/mehmet wd_mehmet
+# sudo mount 139.179.65.3:/nfs/mehmet wd_mehmet
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# cg-common | cgc | wdc* ) ##########################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/wd_cg ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/wd_cg | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/wd_cg is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d wd_cg; then  echo "" ; else mkdir wd_cg ; fi
+# #sudo mount -t smbfs -o username=cg,password=qazxsw //139.179.65.3/cg wd_cg
+# sudo mount 139.179.65.3:/nfs/cg wd_cg
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# unambackup | ubc ) ##########################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/wd_unambackup ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/wd_unambackup | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/wd_unambackup is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d wd_unambackup; then  echo "" ; else mkdir wd_unambackup ; fi
+# sudo mount 139.179.65.3:/nfs/unambackup wd_unambackup
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# unam | wd_unam | wdu ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/wd_unam ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/wd_unam | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/wd_unam is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d wd_unam; then  echo "" ; else mkdir wd_unam ; fi
+# #sudo mount -t smbfs -o username=unam,password=unamgizlisifre //139.179.65.3/unam wd_unam
+# sudo mount 139.179.65.3:/nfs/unam wd_unam
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# us ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/us ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/us | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/us is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d us; then  echo "" ; else mkdir us ; fi
+# sshfs  root@139.179.65.2:/ us
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# cg-us | us_cg | uscg ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/us_cg ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/us_cg | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/us_cg is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d us_cg; then  echo "" ; else mkdir us_cg ; fi
+# sudo mount -t smbfs -o username=cg,password=qazxsw //139.179.65.2/homes us_cg
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# ph | phonon ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/phonon ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/phonon | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/phonon is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d phonon; then  echo "" ; else mkdir phonon ; fi
+# sshfs cg@139.179.64.18:/ phonon
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# bety ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/bety ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/bety | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/bety is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d bety; then  echo "" ; else mkdir bety ; fi
+# sshfs cg@139.179.64.12:/ bety
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# cs | canstein ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/canstein ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/canstein | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/canstein is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d canstein; then  echo "" ; else mkdir canstein ; fi
+# sshfs cg@139.179.64.14:/ canstein
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# gr | graphene ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/graphene ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/graphene | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/graphene is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d graphene; then  echo "" ; else mkdir graphene; fi
+# sshfs cg@139.179.64.10:/ graphene
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# uc | unam-common ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/unam-common ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/unam-common | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/unam-common is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d unam-common; then  echo "" ; else mkdir unam-common; fi
+# sshfs unam-common@139.179.65.2:/ unam-common
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# tubi | ulak* ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/tubi ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/tubi | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/tubi is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d tubi; then  echo "" ; else mkdir tubi ; fi
+# sshfs mtopsakal@kefal1.ulakbim.gov.tr:/home_palamut2/mtopsakal ./tubi/home_palamut2/mtopsakal
+# df -h ; fi
+# ;;
+# 
+# ###################################################################################
+# itu | uybhm ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /home/mt/REMOTEs/itu ; df -h ; exit ; fi
+# if [[ `df -h  | grep /home/mt/REMOTEs/itu | wc -l` = "1" ]] ; then echo "
+# /home/mt/REMOTEs/itu is ALREADY MOUNTED !!!! 
+# " 
+# else
+# if test -d itu; then  echo "" ; else mkdir itu ; fi
+# sshfs  mtopsakal@lnode2:/RS/users/mtopsakal/ itu
+# df -h ; fi
+# ;;
+# 
+# 
+# 
+# ###################################################################################
+# URS | urs ) ############################################################
+# if [[ $2 = u ]] ; then  sudo umount /URS ; df -h ; exit ; fi
+# if [[ `df -h  | grep /URS | wc -l` = "1" ]] ; then echo "
+# /URS is ALREADY MOUNTED !!!! 
+# " 
+# else
+# sudo mount 139.179.65.2:/URS /URS
+# df -h ; fi
+# ;;
+# 
+# 
+# 
+# 
+# esac
+
+
+
+

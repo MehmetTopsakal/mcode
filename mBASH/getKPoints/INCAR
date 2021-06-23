@@ -1,0 +1,42 @@
+ SYSTEM = NbF
+
+ Startparameter for this Run:
+   NWRITE =      2;   LPETIM=F    write-flag & timer
+
+ISTART = 1
+
+ Electronic Relaxation 1
+   ! PREC   = high 
+   NELM   =  60;   
+   EDIFF  =   1E-05   stopping-criterion for ELM
+
+  DOS related values:
+    ISMEAR =  -5
+
+
+    LWAVE = F
+    LCHARG = F
+    
+
+ Electronic Relaxation 2
+    ALGO  =   Fast  algorithm: start with Davidson & switch
+   LDIAG  =      F   sub-space diagonalisation
+   LREAL  =      A    real-space projection
+
+ Ionic Relaxation
+   NSW    =     0    maximum number of steps
+   IBRION =      1    ionic relax: 0-MD 1-quasi-New 2-CG
+   ISIF   =      2    stress and relaxation of cell size / shape
+   ISYM   =      1    symmetry on
+   IWAVPR =      1    prediction:  0-non 1-charg 2-wave 3-comb
+   LCORR  =      T    Harris-correction to forces
+
+LMAXMIX = 6
+
+ICHARG = 11
+LORBIT = 11
+EMIN = -60; EMAX = 15; NEDOS = 1500
+NBANDS =  400
+
+KPAR = 10
+

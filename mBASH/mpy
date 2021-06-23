@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# export HOSTNAME=`hostname`
+# export USER=`whoami`
+# 
+# 
+# 
+# case $HOSTNAME in
+# 
+# *msi.umn.edu | ln*  | cn*  | node*  )
+# python=python3
+# ;;
+# 
+# 
+# * )
+# python=python3
+# ;;
+# 
+# esac
+
+
+
+
+
+
+python=python
+
+
+if test -f $1
+    then $python -B $1 $2 $3 $4 $5 $6 $7 $8 $9
+else $python -B `which $1` $2 $3 $4 $5 $6 $7 $8 $9
+fi
+    
+ 

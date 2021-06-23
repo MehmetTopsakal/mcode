@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -z "$2" ]; then
+depth=1
+  else 
+depth=$2
+fi
+
+file_to_rm=$1
+
+
+find . -maxdepth $depth  -name $file_to_rm -exec /bin/rm -f '{}' \;
+

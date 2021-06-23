@@ -1,0 +1,81 @@
+#!/bin/bash
+# A very simple bash script that collects values from QE calculation.
+# Written by Mehmet Topsakal @ October 2014 @ UofM
+
+
+# select QE output file 
+if [ -z "$1" ]; then  file=scf.out  ; else  file=$1 ; fi
+
+# clean ev.in file
+> ev.in
+
+echo ''
+
+# consider only folders
+folder_list=`for i in * ; do if [ -d $i ]; then echo -n \ $i ; fi ; done` 
+
+
+for i in $folder_list
+do 
+
+cd -- $i  # -- is required for folders starting with -
+
+# skip if $file do not exist
+if [ ! -f $file ]; 
+then 
+# echo "ATTENTION: $file not found in folder $i !!" ;
+color='\e[0;31m' ; nocolor='\e[0m' ; echo -e "${color}ATTENTION :${nocolor}"  "$file not found in folder $i !!"
+cd .. ; continue ; fi
+
+# collect values
+e=`grep  "total energy              =" $file | awk 'END{print}' | cut -c 33-49 | awk  '{printf("%.6f",$1)}'`
+a=`grep  "(alat)" $file | awk 'END{print}' | awk  '{printf("%.5f",$5)}'`  
+v=`grep  "unit-cell volume" $file | awk 'END{print}' | awk  '{printf("%.4f",$4)}'`  
+if [ "$v" = 0.0000 ]; then  
+v=`grep  "unit-cell volume" $file | awk 'END{print}' | awk  '{printf("%.4f",$5)}'` 
+fi
+echo $v
+p=`grep  "total   stress  " $file | awk 'END{print}' | awk  '{printf("%.2f",$6)}'`  
+s=`grep  "convergence has been achieved in" $file | awk '{print (1*$6)}' | tail -1`
+
+color='\e[0;32m' ; nocolor='\e[0m' ; echo -e "${color}Folder :${nocolor}"  `pwd`
+
+cd ..
+
+# skip zero-energy values
+if [ "$e" = "0.000000" ]; then echo "ATTENTION: $file DO NOT contain energy information in folder $i !!"; continue ; fi
+echo $v"  "$e"   "$a"  "$i"  "$s$'     '$p  >> ev.in
+
+done
+
+# cat ev.in | sort -nk 1,1 > s.dat
+# mv s.dat ev.in
+# 
+# # this part plots first two columns of ev.in
+# 
+# emin=`cat ev.in | awk '{print $2}' | sort -n | head -1`
+# emax=`cat ev.in | awk '{print $2}' | sort -n | tail -1`
+# diff=`echo $emin - $emax | bc -l`  ;  step=`echo $diff / -60 | bc -l`
+# 
+# 
+# size=`cat ev.in | wc -l`
+# 
+# echo ''
+# echo "i     folder        E_relative   "
+# 
+# # for i in `echo $size | awk -v s="$size" '{ for (i = 1; i <= s; i++) printf("%d ", i ) }'`
+# for i in `seq -w 1 $size`
+# do
+# 
+# energy=`cat ev.in | awk '{print $2}' | awk "NR==$i" | awk -v min="$emin" '{printf("%.4f \n",($1-min))}'` 
+# folder=`cat ev.in | awk '{print $4}' | awk "NR==$i" `
+# 
+# echo   `echo "$i __ " | cut -c 1-9`      `echo "$folder _______ " | cut -c 1-30`       `echo "$energy"`      `echo $energy $step | awk '{ energy = $1 ; step = $2 ; while ( energy >= 0 ) { plota = 1 ; printf "%d" ,plota ; energy = energy - step }  }'`
+# 
+# 
+# done
+# echo "i     folder        E_relative   "
+# echo ''
+qplot ev.in 4 2
+
+

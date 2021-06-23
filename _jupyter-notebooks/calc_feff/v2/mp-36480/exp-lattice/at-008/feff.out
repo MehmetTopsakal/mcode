@@ -1,0 +1,69 @@
+### feff starts at Tue Oct 31 10:35:41 EDT 2017
+### Serial version
+### FeffPath is /home/mt/software/JFEFF/feff90/linux
+ 
+Launching FEFF version FEFF 9.9.1
+Resetting lmaxsc to 2 for iph =    2.  Use  UNFREEZE to prevent this.
+Core hole lifetime is   0.156 eV.
+Your calculation:
+ xx
+O K edge XANES using RPA corehole.
+Using:     * Self-Consistent Field potentials
+Using cards:   ATOMS CONTROL EXCHANGE TITLE RPATH POTENTIALS XANES EDGE SCF FMS S02 COREHOLE
+
+Calculating atomic potentials ...
+    overlapped atomic potential and density for unique potential    0
+    overlapped atomic potential and density for unique potential    1
+    overlapped atomic potential and density for unique potential    2
+    overlapped atomic potential and density for unique potential    3
+Done with module: atomic potentials.
+
+Calculating SCF potentials ...
+FEFF-serial using 1 thread.
+Muffin tin radii and interstitial parameters [bohr]:
+type, norman radius, muffin tin, overlap factor
+    0  1.00354E+00  8.37900E-01  1.15000E+00
+    1  1.17098E+00  1.11905E+00  1.12143E+00
+    2  1.55447E+00  1.40012E+00  1.15000E+00
+    3  1.03103E+00  9.90984E-01  1.10411E+00
+Core-valence separation energy:  ecv=   -49.000 eV
+Initial Fermi level:              mu=    -3.240 eV
+SCF ITERATION NUMBER  1
+     point #   1  energy = -49.000
+FMS for a cluster of   74 atoms around atom type   0
+FMS for a cluster of   71 atoms around atom type   1
+FMS for a cluster of   67 atoms around atom type   2
+FMS for a cluster of   72 atoms around atom type   3
+     point #  20  energy = -37.827
+     point #  40  energy = -17.577
+     point #  60  energy =  -8.512
+     point #  80  energy =  -7.821
+New Fermi level:    mu=  -7.730 eV  Charge distance=  1.0137 (partial c.d.=  6.1589)
+SCF ITERATION NUMBER  2
+     point #   1  energy = -49.000
+     point #  20  energy = -37.928
+     point #  40  energy = -17.796
+     point #  60  energy =  -7.730
+     point #  80  energy =  -8.365
+     point # 100  energy = -12.627
+New Fermi level:    mu= -12.350 eV  Charge distance=  0.1770 (partial c.d.=  5.0794)
+SCF ITERATION NUMBER  3
+     point #   1  energy = -49.000
+     point #  20  energy = -37.802
+     point #  40  energy = -17.441
+     point #  60  energy = -12.350
+New Fermi level:    mu= -11.944 eV  Charge distance=  0.5977 (partial c.d.=  0.1556)
+SCF ITERATION NUMBER  4
+     point #   1  energy = -49.000
+     point #  20  energy = -37.983
+     point #  40  energy = -17.953
+     point #  60  energy = -11.944
+     point #  80  energy = -10.744
+     point # 100  energy =  -6.598
+New Fermi level:    mu=  -6.041 eV  Charge distance=  0.5949 (partial c.d.=  7.5604)
+SCF ITERATION NUMBER  5
+     point #   1  energy = -49.000
+     point #  20  energy = -37.749
+     point #  40  energy = -17.292
+     point #  60  energy =  -6.041
+     point #  80  energy =  -6.676

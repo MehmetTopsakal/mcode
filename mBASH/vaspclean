@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+ 
+ 
+case $1 in 
+
+before | b )
+
+rm -f CHG CHGCAR-u-d CONTCAR DOSCAR  EIGENVAL  IBZKPT OSZICAR  OUTCAR  p4vasp.log  pdos.eps *.mat pdos.mat *vasp.out  vasprun.xml \
+IBZKPT PCDAT XDATCAR ELFCAR *.result.out *.error.err .*.err   STOPCAR* result.out *.eps *.ps *.pdf *bands.dat \
+vasprun.npz FXC*.tmp AECCAR0 AECCAR1 AECCAR2 LOCPOT .*.nodes *.vasp.out .panfs.* _ERROR* $2 $3 $4 $5 $6 $7 $8
+;;
+
+
+after | a )
+
+
+sleep 2
+
+rm -f CHG PCDAT XDATCAR ELFCAR .*.nodes PROCAR PCDAT REPORT XDATCAR $2 $3 $4 $5 $6 $7 $8
+
+existence_of_WAVECAR=`ls | grep WAVECAR | wc -l`
+if [ "$existence_of_WAVECAR" = "1" ]
+then
+WAVECAR_size=`du  WAVECAR | awk '{print $1}'` 
+if [ "$WAVECAR_size" = "32" ]
+then rm -rf WAVECAR
+fi
+fi
+
+
+#clean empty files
+existence_of_CHGCAR=`ls | grep CHGCAR | wc -l`
+if [ "$existence_of_CHGCAR" = "1" ]
+then
+CHGCAR_size=`du  CHGCAR | awk '{print $1}'` 
+if [ "$CHGCAR_size" = "32" ]
+then rm -rf CHGCAR
+fi
+fi
+;;
+
+
+esac
+

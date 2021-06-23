@@ -1,0 +1,78 @@
+#!/bin/bash
+
+
+nano /home/mt/mBOX/01-scripts/local/linux/matlab -nosplash  -nodesktop
+
+
+
+# 
+# 
+# #  dosya=`echo $1 | awk -F ".m"  '{print $1}'`
+# 
+# existenceoffish=`echo $1 | grep "fish" | wc -l`
+# 
+# if [ $existenceoffish = "1" ]; then
+# 
+#   dosya=` echo $1 | awk -F "/"  '{ print $NF }'`
+#   adres=` echo $1  | awk -F ":22" '{print $2}' |  awk -F "/" '{ for (i = 1; i <= (NF-1); i++) printf("%s/", $i ) }'`
+#   user=`ps ux | grep mmatlab | grep fish | awk '{print $13}' | awk -F "@" '{print $1}' | awk -F "/" '{print $3}'`
+#   ip=` echo $1  | awk -F "@" '{print $2}' | awk -F ":"  '{print $1}'`
+# case $dosya in
+# 
+#   *.dat | *.m )
+# 
+#   rm -rf /home/mt/MATLAB/tmp1 ; mkdir /home/mt/MATLAB/tmp1 ; cd /home/mt/MATLAB/tmp1
+#   scp $user@$ip:$adres/$dosya /home/mt/MATLAB/tmp1
+#   scp $user@$ip:$adres/*.dat /home/mt/MATLAB/tmp1
+#   scp $user@$ip:$adres/*.m /home/mt/MATLAB/tmp1
+#   konqueror # --open-session mmatlab
+# #   matlab -nosplash  -desktop
+#   scp -r /home/mt/MATLAB/tmp1/* $user@$ip:$adres ;;
+# 
+#   * )
+# 
+#   adres=` echo $1  | awk -F ":22" '{print $2}' |  awk -F "/" '{ for (i = 1; i <= (NF); i++) printf("%s/", $i ) }'`
+# 
+#   rm -rf /home/mt/MATLAB/tmp1 ; mkdir /home/mt/MATLAB/tmp1 ; cd /home/mt/MATLAB/tmp1
+#   scp  $user@$ip:$adres/*.dat /home/mt/MATLAB/tmp1
+#   scp  $user@$ip:$adres/*.m /home/mt/MATLAB/tmp1
+#   konqueror # --open-session mmatlab
+# #  matlab -nosplash  -desktop
+#   scp  /home/mt/MATLAB/tmp1/* $user@$ip:$adres ;;
+# 
+# esac
+# 
+# exit
+# 
+# fi
+# 
+# 
+# 
+# existenceofslash=`echo $1 | grep "/" | wc -l`
+#   if [ $existenceofslash = "1" ]; then
+#   cd $1
+#   matlab -nosplash  -desktop
+#   exit
+#     else 
+#     existenceofmfile=`echo $1 | grep ".m" | wc -l`
+#     if [ $existenceofmfile = "1" ]; then
+#     dosya=`echo "$1 " | awk -F ".m "  '{print $1}'`
+#     echo "exit %deletethis" >> $1
+#     matlab  -nodisplay -r $dosya
+#     sed "/deletethis/d" <  $1 >  $1.new
+#     sleep 2 ; mv $1.new $1
+#     exit
+#     fi
+#   fi
+# 
+# existenceofarg1=`echo $1 | grep "/" | wc -l`
+#   if [ $existenceofarg1 = "0" ]; then
+#    matlab -nodisplay
+#   fi
+# # 
+# #     cd $i
+# #     matlab -desktop -nosplash
+# # else
+# # dosya=`echo $1 | awk -F ".m"  '{print $1}'`
+# # matlab  -nodisplay -r $dosya 
+# # fi

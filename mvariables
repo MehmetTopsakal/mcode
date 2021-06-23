@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# globals
+export au=1.88972612456506
+export au3=6.74833449394997
+export ev=13.605698066
+
+alias grep='grep --color=auto'
+
+# -- PATHS
+export PATH=~/code/mBASH:$PATH
+
+# -- PYTHONPATHS
+export PYTHONPATH=~/code:$PYTHONPATH
+
+
+
+
+
+HOSTNAME=`hostname`
+case $HOSTNAME in
+
+thinkpadx1 )
+    export OMP_NUM_THREADS=1
+    alias VESTA=~/software/VESTA-x86_64/VESTA
+    source /opt/intel/bin/compilervars.sh -arch intel64 -platform linux
+    source /opt/intel/mkl/bin/mklvars.sh intel64
+    export LD_LIBRARY_PATH=~/software/fftw-3.3.5/lib:$LD_LIBRARY_PATH  
+    export PATH=~/software/vasp/vasp.5.4.4/bin/:$PATH   
+    export PATH=~/code/_local/think:$PATH 
+;;
+
+WNE158260 )
+    export OMP_NUM_THREADS=4
+    source /opt/intel/bin/compilervars.sh  -arch intel64 -platform linux
+    source /opt/intel/mkl/bin/mklvars.sh intel64
+    export PATH=~/code/_local/ames:$PATH
+    
+    #=====================================================================================
+    # The following shell variables are needed for executing scripts in exciting tutorials
+    # 
+    export EXCITINGROOT=/home/mtopsakal/software/_src/EXCITING/nitrogen-14
+    export EXCITINGBIN=$EXCITINGROOT/bin
+    export EXCITINGTOOLS=$EXCITINGROOT/tools
+    export EXCITINGSTM=$EXCITINGTOOLS/stm
+    export EXCITINGVISUAL=$EXCITINGROOT/xml/visualizationtemplates
+    export EXCITINGCONVERT=$EXCITINGROOT/xml/inputfileconverter
+    #-------------------------------------------------------------------------------------
+    export TIMEFORMAT="   Elapsed time = %0lR"
+    #-------------------------------------------------------------------------------------
+    export WRITEMINMAX="1"
+    #-------------------------------------------------------------------------------------
+    export PYTHONPATH=$PYTHONPATH:$EXCITINGSTM
+    export PATH=$PATH:$EXCITINGTOOLS:$EXCITINGBIN:$EXCITINGSTM
+    #-------------------------------------------------------------------------------------
+    function DOS  () { xsltproc $EXCITINGVISUAL/xmldos2grace.xsl dos.xml > $1 ; }
+    function BAND () { xsltproc $EXCITINGVISUAL/xmlband2agr.xsl bandstructure.xml ; }
+    #=====================================================================================    
+          
+    
+;;
+
+130-199-210-75.dhcp.bnl.gov | LNE-165171 )
+    export PATH=~/code/_local/mbp:$PATH
+;;
+
+mt-VBox )
+    export PATH=~/code/_local/mt-VBox:$PATH    
+;;
+
+LNE-165171.home )
+;;
+
+
+esac
+
+
+    
+    
+    

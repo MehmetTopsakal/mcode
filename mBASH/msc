@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# VESION NUMBER 2.0
+#
+#
+
+file=$1
+echo "Getting grid_line1"
+grid_line1=`head -n 1000 $file | awk 'NF<1 {print (NR+1)}'`
+echo "Getting grid_info"
+grid_info=`awk "NR==$grid_line1" $file`
+echo "Getting grid_line2"
+grid_line2=`grep -n "$grid_info" $file | awk "NR==2" | awk -F ":" '{print $1}'`
+
+echo "Creating u-d file"
+awk  "NR==1,NR==$grid_line1" $file >  $file-u-d
+awk  "NR>$grid_line2"        $file >> $file-u-d
+
+echo "Finished ....."

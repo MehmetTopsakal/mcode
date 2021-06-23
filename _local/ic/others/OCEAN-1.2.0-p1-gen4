@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+
+
+
+import numpy as np
+import sys, os, subprocess, time
+from io import open
+
+time.sleep(3)
+
+
+
+
+
+
+# =================================================================== 
+inputs = sys.argv
+
+for a in range(len(inputs)):
+    s=inputs[a].split('=')
+    if s[0] == 'jid': jid = int(s[1])
+    elif s[0] == 'cpj' or s[0] == 'n' : cpj = int(s[1]) 
+    elif s[0] == 'npj' or s[0] == 'N' : npj = int(s[1]) 
+    elif s[0] == 'input' or s[0] == 'i' : inf = s[1]     
+
+try:
+    npj
+except:
+    npj=1
+
+try:
+    cpj
+except:
+    cpj=npj*12
+
+try:
+    inf
+except:
+    inf='ocean'
+infile=inf+'.in'
+out=inf+'-p1.out'
+
+
+
+    
+# =================================================================== 
+with open(infile, mode='r') as f:
+    lines = f.readlines()
+
+f = open("newfile.tmp","w")
+here=os.getcwd()
+f.write('para_prefix{ srun -n '+str(int(cpj))+' -N '+str(int(npj))+'} \n')
+for line in lines:
+    if 'para_prefix' not in line:
+        f.write(line)
+f.close()
+os.rename('newfile.tmp',infile)
+
+
+    
+# =================================================================== 
+
+of = open(out, 'w')    
+of.write('# job starts with cpj='+str(cpj)+'  npj='+str(npj)+'\n')  
+of.write('# \n') ; of.write('# \n')    
+of.close()
+ 
+subprocess.call(' rm -rf CNBSE Common PAW PREP SCREEN zWFN OPF '+out+' ', shell=True) 
+subprocess.call('sleep 2; module load intel/PSXE2017; /sdcc/u/mtopsakal/software/ocean/ocean-1.2.0p1/ocean.pl '+infile+' >> '+out+' & wait ', shell=True)
+

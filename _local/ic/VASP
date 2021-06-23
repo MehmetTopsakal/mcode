@@ -1,0 +1,196 @@
+#!/usr/bin/env python
+
+import numpy as np
+import sys, os, subprocess, time
+from io import open
+
+### USAGE:
+### 
+### 
+### VASP.py jid=$jid c=16 exe=std N=1 K=2
+### 
+### 
+### 
+#### ========================================================
+
+
+
+subprocess.call(' vaspclean b *.vasp.out ', shell=True)
+time.sleep(3)
+
+
+
+
+inputs = sys.argv
+#print(inputs)
+
+# read inputs
+for a in range(len(inputs)):
+    s=inputs[a].split('=')                       
+    if   s[0] == 'mode'      or s[0] == 'm'      : mode      = int(s[1])
+    elif s[0] == 'machine'   or s[0] == 'mac'    : mac       = s[1]    
+    elif s[0] == 'alloc'     or s[0] == 'A'      : alloc     = s[1]  
+    elif s[0] == 'time'      or s[0] == 't'      : jtime     = s[1]  
+    elif s[0] == 'partition' or s[0] == 'p'      : partition = s[1] 
+    elif s[0] == 'usegpu'    or s[0] == 'gpu'    : gpu       = int(s[1])    
+    elif s[0] == 'npj'       or s[0] == 'N'      : npj       = int(s[1]) 
+    elif s[0] == 'cpj'       or s[0] == 'n'      : cpj       = int(s[1]) 
+    elif s[0] == 'KPAR'      or s[0] == 'K'      : KPAR      = int(s[1]) 
+    elif s[0] == 'NCORE'     or s[0] == 'C'      : NCORE     = int(s[1])
+    elif s[0] == 'NSIM'      or s[0] == 'S'      : NSIM      = int(s[1])   
+    elif s[0] == 'exe'       or s[0] == 'e'      : exe       = s[1] 
+
+
+
+try: mode
+except: mode = 0
+
+try: mac
+except: mac = 'ic'
+
+try: alloc
+except: alloc = 'pq0004'
+
+try: jtime
+except: jtime = '00:30:00'
+
+try: partition
+except: partition = 'debug'
+
+try: gpu
+except: gpu=0
+
+try: npj
+except: npj = 1
+
+try: cpj
+except: 
+    if mac == 'hsw':
+        cpj = npj*36
+    elif mac == 'knl':
+        cpj = npj*64       
+    elif mac == 'gen34':
+        cpj = npj*12
+
+try: KPAR
+except: KPAR = 1
+
+try: NCORE
+except: 
+    if mac == 'hsw':
+        NCORE = 6
+    elif mac == 'knl':
+        NCORE = 1      
+    elif mac == 'gen34':
+        NCORE = 4
+
+try: NSIM
+except: 
+    if int(npj) <= 2:
+        NSIM = 4
+    else: NSIM = 8
+# see https://www.nsc.liu.se/~pla/blog/2012/02/22/nparnsim/
+
+try: exe
+except:
+    if gpu == 0:
+        exe = '/sdcc/u/mtopsakal/software/vasp/5.4.4/hsw/bin/vasp_std'
+    if gpu == 1:
+        exe = '/sdcc/u/mtopsakal/software/vasp/5.4.4/knl/bin/vasp_std'
+
+
+
+
+
+    
+# modify INCAR
+inew = open('INCARnewtmp', 'w')
+
+with open('INCAR', 'r') as f:
+    lines = f.readlines()
+    
+for i in range(len(lines)):
+    if lines[i].lstrip().startswith('NPAR'):
+        continue
+    elif lines[i].lstrip().startswith('KPAR'):
+        continue 
+    elif lines[i].lstrip().startswith('NCORE'):
+        continue     
+    elif lines[i].lstrip().startswith('NSIM'):
+        continue         
+    inew.write(lines[i])
+
+#try: KPAR = 'KPAR = '+str(int(KPAR))
+#except: KPAR = KPAR
+#try: NCORE = 'NCORE = '+str(int(NCORE))
+#except: NCORE = NCORE
+#try: NSIM = 'NSIM = '+str(int(NSIM))
+#except: NSIM = NSIM
+
+if KPAR < 1: KPAR = ''
+else: KPAR = 'KPAR = '+str(KPAR)+';' 
+if NCORE < 1: NCORE = ''
+else: NCORE = 'NCORE = '+str(NCORE)+';' 
+if NSIM < 1: NSIM = ''
+else: NSIM = 'NSIM = '+str(NSIM)
+
+inew.write('\n')        
+inew.write(NCORE+'  '+KPAR+'  '+NSIM) 
+
+inew.close()
+
+os.rename('INCARnewtmp','INCAR')   
+
+
+import time
+ts = time.time()
+import datetime
+dst = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+dst_long = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+if mode == 0:
+    vaspline = 'sleep 2; module load intel/PSXE2017.u4; srun -n '+str(cpj)+'  '+exe+'  >> '+dst+'.vasp.out '+'\n'
+
+
+if mode == 1:
+    if gpu == 1: 
+        gpustr='--gres=gpu:4'
+    else: gpustr='  '  
+    vaspline = 'sleep 2; module load intel/PSXE2017.u4; srun '+gpustr+' -A '+alloc+' --nodes='+str(npj)+' --time='+jtime+' --partition='+partition+' -n '+str(cpj)+'  '+exe+'  >> '+dst+'.vasp.out '+'\n'
+
+
+
+of = open(dst+'.vasp.out', 'w')
+of.write('# job submitted at '+dst_long+'\n')
+of.write('# vasp command: '+vaspline+'\n')
+of.close()
+
+
+timestamp1 = time.time()
+subprocess.call(vaspline, shell=True)
+timestamp2 = time.time()
+
+
+ts = time.time()
+dst_now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+subprocess.call('echo '' >> '+dst+'.vasp.out ', shell=True)
+subprocess.call('echo \#job ends at '+dst_now+'  >> '+dst+'.vasp.out ', shell=True)
+subprocess.call('echo \#Elapsed time: '+str( round( (timestamp2 - timestamp1)/60,2 ) )+' minutes >> '+dst+'.vasp.out ', shell=True) 
+
+os.rename(dst+'.vasp.out','vasp.out')
+subprocess.call(' vaspclean a ', shell=True)
+subprocess.call(' import mVASP; mVASP.readvasp() ', shell=True)
+
+
+
+
+
+
+
+
+
+
+
+    
+

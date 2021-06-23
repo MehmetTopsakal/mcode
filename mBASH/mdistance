@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+pos2xyz $1 ;
+atom1=$2 ; atom2=$3 ;
+
+pos1_x=`cat $1.xyz | awk "NR>2" | awk "NR==$atom1" | awk '{print $2}'` ;
+pos1_y=`cat $1.xyz | awk "NR>2" | awk "NR==$atom1" | awk '{print $3}'` ;
+pos1_z=`cat $1.xyz | awk "NR>2" | awk "NR==$atom1" | awk '{print $4}'` ;
+
+pos2_x=`cat $1.xyz | awk "NR>2" | awk "NR==$atom2" | awk '{print $2}'` ;
+pos2_y=`cat $1.xyz | awk "NR>2" | awk "NR==$atom2" | awk '{print $3}'` ;
+pos2_z=`cat $1.xyz | awk "NR>2" | awk "NR==$atom2" | awk '{print $4}'` ;
+# diff_x2=`echo 1 | awk -v pos1_x="$pos1_x" -v pos2_x="$pos2_x" '{printf( "%.10f \t" ,(pos1_x-pos2_x)*(pos1_x-pos2_x))}'`;
+# diff_y2=`echo 1 | awk -v pos1_y="$pos1_y" -v pos2_y="$pos2_y" '{printf( "%.10f \t" ,(pos1_y-pos2_y)*(pos1_y-pos2_y))}'`;
+# diff_z2=`echo 1 | awk -v pos1_z="$pos1_z" -v pos2_z="$pos2_z" '{printf( "%.10f \t" ,(pos1_z-pos2_z)*(pos1_z-pos2_z))}'`;
+
+diff_x2=`echo 1 | awk -v pos1_x="$pos1_x" -v pos2_x="$pos2_x" '{printf( "%.10f \t" ,(pos1_x-pos2_x)*(pos1_x-pos2_x))}'`;
+diff_y2=`echo 1 | awk -v pos1_y="$pos1_y" -v pos2_y="$pos2_y" '{printf( "%.10f \t" ,(pos1_y-pos2_y)*(pos1_y-pos2_y))}'`;
+diff_z2=`echo 1 | awk -v pos1_z="$pos1_z" -v pos2_z="$pos2_z" '{printf( "%.10f \t" ,(pos1_z-pos2_z)*(pos1_z-pos2_z))}'`;
+
+distance=`echo ""|awk '{ print sqrt(X2+Y2+Z2) }' X2=$diff_x2 Y2=$diff_y2 Z2=$diff_z2 `
+
+#echo $distance > distance_$atom1.$atom2
+
+echo "distance between atom_$atom1 and atom_$atom2 is $distance"
+
+rm -rf $1.xyz
+exit

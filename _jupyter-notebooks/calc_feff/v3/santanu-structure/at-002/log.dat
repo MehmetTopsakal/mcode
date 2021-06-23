@@ -1,0 +1,8 @@
+Launching FEFF version FEFF 9.9.1
+Core hole lifetime is   1.576 eV.
+Your calculation:
+ xx
+Ni K edge EXAFS using FSR corehole.
+Using:     * Self-Consistent Field potentials
+Using cards:   ATOMS CONTROL EXCHANGE TITLE RPATH PRINT POTENTIALS EXAFS EDGE SCF S02
+

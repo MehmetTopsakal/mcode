@@ -1,0 +1,26 @@
+mkdir ~/temp  2> /dev/null  
+
+cd  ~/temp 
+
+
+
+
+mkdir old  2> /dev/null
+mv old old.old
+   list=`ls`
+mkdir old
+
+mv $list old
+
+
+mkdir ~/temp/1  2> /dev/null
+mkdir ~/temp/2  2> /dev/null
+mkdir ~/temp/3  2> /dev/null
+mkdir ~/temp/4  2> /dev/null
+mkdir ~/temp/5  2> /dev/null
+mkdir ~/temp/6  2> /dev/null
+mkdir ~/temp/7  2> /dev/null
+mkdir ~/temp/8  2> /dev/null
+mkdir ~/temp/9  2> /dev/null
+
+

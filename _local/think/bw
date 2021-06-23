@@ -1,0 +1,14 @@
+case $1 in
+
+
+* )
+if [ -z "$1" ]; then
+ssh -v mtopsaka@h2ologin.ncsa.illinois.edu
+  else 
+ssh -v mtopsaka@$1
+fi  
+;;
+
+esac
+
+

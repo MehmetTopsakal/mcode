@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+case $2 in
+
+nr | no-remove ) ##########################################################
+
+adres=`pwd` ; matlab1="$1" ; > hyapm.m
+
+for i in $(for i in * ; do if [ -d $i ]; then echo $i ; fi ; done) ; do
+
+echo "cd $adres/$i ; 
+$matlab1 ; 
+" >> hyapm.m
+
+done
+
+mmatlab hyapm.m
+;;
+
+
+nm | no-matlab ) ##########################################################
+
+adres=`pwd` ; matlab1="$1" ; > hyapm.m
+
+for i in $(for i in * ; do if [ -d $i ]; then echo $i ; fi ; done) ; do
+
+echo "cd $adres/$i ; 
+$matlab1 ; 
+" >> hyapm.m
+
+done
+
+;;
+
+
+* ) #######################################################################
+
+adres=`pwd` ; matlab1="$1" ; > hyapm.m
+
+for i in $(for i in * ; do if [ -d $i ]; then echo $i ; fi ; done) ; do
+
+echo "cd $adres/$i ; 
+$matlab1 ; 
+" >> hyapm.m
+
+done
+
+matlab -nosplash -nodisplay -nodesktop hyapm
+# rm -f hyapm.m
+;;
+
+esac
+
+

@@ -1,0 +1,109 @@
+Welcome to OCEAN
+####################################################################################################
+#                 OOO   CC  EEEE  AA  N  N                 #
+#                O   O C  C E    A  A NN N                 #
+#      **        O   O C    E    A  A NN N         **      #
+#     **         O   O C    EE   AAAA N NN          **     #
+#    ***    **   O   O C    E    A  A N NN    **    ***    #
+#   *****  ***   O   O C  C E    A  A N  N    ***  *****   #
+# **************  OOO   CC  EEEE A  A N  N  ************** #
+####################################################################################################
+Version 1.2.0
+No previous run found
+Setup complete, parsing ...
+Config read in
+Input read in
+/hpcgpfs01/scratch/mtopsakal/1.2.0-again/r/Common
+GRABBED 288 as the number of cpus to run with!
+288 has 18 factors
+1
+2
+3
+4
+6
+8
+9
+12
+16
+18
+24
+32
+36
+48
+72
+96
+144
+288
+1.889726	1.889726	1.889726
+5.9100000000	0.0000000000	0.0000000000
+-2.9550000000	5.1182101364	0.0000000000
+0.0000000000	0.0000000000	14.4350000000
+Volume:	2946.58447885218
+Key: xmesh	0.6	0.82	1.18
+Key: kmesh	48	64	84
+Key: ngkpt	15	20	28
+Key: nkpt	4	8	12
+Key: obkpt	20	28	32
+NKPTS: 32, ideal pools: 32
+Minimum size for interpolation pools 2
+KPTS: 32, obf pool size: 9
+NGKPTS: 32, ideal pools: 32
+Defaults requested for obkpt
+Defaults chosen for obkpt:	2	2	1
+OBKPTS: 4, ideal pools: 4
+Default chosen for obf_nbands:	600
+Defaults requested for xmesh.ipt
+Defaults chosen for xmesh.ipt:	8	8	18
+PAW: 8, ideal pools: 8
+Minimum size for interpolation pools 2
+288	36	8
+PAW: 8, obf pool size: 36
+8:
+  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34
+22:
+  1  2  3  4  5  6  7  8  9  10
+3:
+  35  36  37  38  39  40  41  42  43  44  45  46  47  48
+1 1 0
+3 1 0
+7 1 0
+9 1 0
+Done with parsing
+####################################################################################################
+Entering PAW stage
+Running PAW Setup
+Converting psp format
+Starting HFK section
+Running hfk.x
+Done running hfk.x
+PAW section done
+####################################################################################################
+Entering QESPRESSO stage
+pplist not found
+Differences found for density run. Clearing all old data
+Running DFT calculation using QE
+/gpfshome01/u/mtopsakal/software/ocean/PseudoPots
+making the coordinates  in makecoords
+ User has set ZSYMB
+making acell  in makeacell
+making atompp  in makeatompp
+Density SCF Run
+srun -n 288  /gpfshome01/u/mtopsakal/software/ocean/ocean-1.2.0-p1/pw.x  -npool 32 < scf.in > scf.out 2>&1
+SCF complete
+Density PP Run
+srun -n 288  /gpfshome01/u/mtopsakal/software/ocean/ocean-1.2.0-p1/pp.x  -npool 32 < pp.in > pp.out 2>&1
+Density conversion
+Counted 64 kpts
+142	137
+Fermi level found at 9.4377 eV
+NSCF run
+BSE NSCF Run
+srun -n 288  /gpfshome01/u/mtopsakal/software/ocean/ocean-1.2.0-p1/pw.x  -npool 32 < nscf.in > nscf.out 2>&1
+BSE NSCF complete
+Screening NSCF Run
+srun -n 288  /gpfshome01/u/mtopsakal/software/ocean/ocean-1.2.0-p1/pw.x  -npool 8 < nscf.in > nscf.out 2>&1
+Screening NSCF complete
+Espresso stage complete
+####################################################################################################
+Ocean part-1 is done
+####################################################################################################

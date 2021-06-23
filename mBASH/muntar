@@ -1,0 +1,8 @@
+#!/bin/bash
+
+file_to_untar=$1
+
+
+find . -maxdepth 1  -name $file_to_untar | xargs tar -zxvf 
+
+if [ "$2" = "r" ]; then rm -f $file_to_untar ; fi
