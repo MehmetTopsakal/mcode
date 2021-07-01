@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# globals
+# globals  
 export au=1.88972612456506
 export au3=6.74833449394997
 export ev=13.605698066
