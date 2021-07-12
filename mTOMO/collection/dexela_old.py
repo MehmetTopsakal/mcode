@@ -28,6 +28,9 @@ from ophyd.areadetector import (EpicsSignalWithRBV as SignalWithRBV)
 import time
 
 
+from ophyd import Component as C
+
+
 # monkey patch for trailing slash problem
 def _ensure_trailing_slash(path):
     """
@@ -105,13 +108,23 @@ class DexelaDetector(AreaDetector):
 class XPDDDexelaDetector(SingleTrigger, DexelaDetector):
     total_points = Cpt(Signal, value=1, doc="The total number of points to be taken")
     stats1 = Cpt(StatsPluginV33, 'Stats1:')
+    
+    #tiff = Cpt(XPDDDexelaTiffPlugin, 'TIFF1:',
+               #read_attrs=[],
+               #configuration_attrs=[],
+               #write_path_template='Z:\\dex_data\\%Y\\%m\\%d\\',               
+               #read_path_template='/nsls2/xf28id2/dex_data/%Y/%m/%d/', 
+               #root='/nsls2/xf28id2/dex_data/',) 
+    
     tiff = Cpt(XPDDDexelaTiffPlugin, 'TIFF1:',
                read_attrs=[],
                configuration_attrs=[],
-               write_path_template='S:\\dexela\\', 
-               read_path_template='/data/st/dexela/', 
-               root='/data/st/',) 
+               write_path_template='J:\\dexela_data\\test\\',               
+               read_path_template='/nsls2/data/xpd/tomo/legacy/raw/dexela_data/test/', 
+               root='/nsls2/data/xpd/tomo/legacy/raw/dexela_data/',)     
     
+    
+    proc = C(ProcessPlugin, 'Proc1:')
     wait_for_plugins = Cpt(EpicsSignal, '')
 
     detector_type=Cpt(Signal, value='Dexela 2923', kind='config')
@@ -122,8 +135,9 @@ class XPDDDexelaDetector(SingleTrigger, DexelaDetector):
         wait_for_plugins.put(1)
         
         self.cam.stage_sigs['image_mode'] = 'Single'
-        self.cam.stage_sigs['trigger_mode'] = 'Int. Software'
-            
+#         self.cam.stage_sigs['trigger_mode'] = 'Int. Software'
+        self.cam.stage_sigs['trigger_mode'] = 'Int. Fixed Rate'
+        
     def stage(self, *args, **kwargs):
         return super().stage(*args, **kwargs)
 

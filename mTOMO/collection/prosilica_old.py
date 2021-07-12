@@ -47,6 +47,8 @@ class StandardProsilica(SingleTrigger, ProsilicaDetector):
     # This class does not save TIFFs. We make it aware of the TIFF plugin
     # only so that it can ensure that the plugin is not auto-saving.
     tiff = Cpt(TIFFPluginEnsuredOff, suffix='TIFF1:')
+    
+    proc = C(ProcessPlugin, 'Proc1:')
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('labels', ['cameras'])
@@ -57,8 +59,8 @@ class StandardProsilica(SingleTrigger, ProsilicaDetector):
 class StandardProsilicaWithTIFF(StandardProsilica):
     tiff = Cpt(TIFFPluginWithFileStore,
                suffix='TIFF1:',
-               write_path_template='/nsls2/data/xpd/tomo/legacy/raw/prosilica_data/test',
-               read_path_template='/nsls2/data/xpd/tomo/legacy/raw/prosilica_data/test',
+               write_path_template='/nsls2/data/xpd/tomo/legacy/raw/prosilica_data/%Y/%m/%d/',
+               read_path_template='/nsls2/data/xpd/tomo/legacy/raw/prosilica_data/%Y/%m/%d/',
                root='/nsls2/data/xpd/tomo/legacy/raw/prosilica_data/')
     
 prosilica = StandardProsilicaWithTIFF('XF:28IDD-BI{Det-Sample:1}', name='prosilica')
