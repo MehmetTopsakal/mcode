@@ -125,7 +125,9 @@ class ContinuousAcquisitionTrigger(BlueskyInterface):
         if image_name is None:
             image_name = '_'.join([self.name, 'image'])
         self._plugin.stage_sigs[self._plugin.auto_save] = 'No'
-        self.cam.stage_sigs[self.cam.image_mode] = 'Continuous'
+        #self.cam.stage_sigs[self.cam.image_mode] = 'Continuous'
+        self.cam.stage_sigs['image_mode'] = 'Continuous'
+        self.cam.stage_sigs['acquire'] = 1
         self._plugin.stage_sigs[self._plugin.file_write_mode] = 'Capture'
         self._image_name = image_name
         self._status = None
@@ -138,11 +140,7 @@ class ContinuousAcquisitionTrigger(BlueskyInterface):
         self.cam.stage_sigs['trigger_mode'] = 'Off'
         self.cam.stage_sigs['trigger_mode'] = 'Internal'
 
-    def stage(self):
-        
-        if self.cam.acquire.get() != 1:
-            self.cam.acquire.put(1)
-       
+    def stage(self):      
         if self.cam.acquire.get() != 1:
             raise RuntimeError("The ContinuousAcuqisitionTrigger expects "
                                "the detector to already be acquiring.")

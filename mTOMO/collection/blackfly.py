@@ -128,7 +128,9 @@ class ContinuousAcquisitionTrigger(BlueskyInterface):
         if image_name is None:
             image_name = '_'.join([self.name, 'image'])
         self._plugin.stage_sigs[self._plugin.auto_save] = 'No'
-        self.cam.stage_sigs[self.cam.image_mode] = 'Continuous'
+        #self.cam.stage_sigs[self.cam.image_mode] = 'Continuous'
+        self.cam.stage_sigs['acquire'] = 1
+        self.cam.stage_sigs['image_mode'] = 'Continuous'
         self._plugin.stage_sigs[self._plugin.file_write_mode] = 'Capture'
         self._image_name = image_name
         self._status = None

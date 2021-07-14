@@ -1,4 +1,26 @@
- 
+
+def configure_area_det(det,acq_time,exposure,num_exposure=1):
+    
+    if det.cam.acquire.get() == 0:
+        yield from bps.abs_set(det.cam.acquire, 1, wait=True)
+
+    yield from bps.abs_set(det.cam.acquire_time, acq_time, wait=True)
+    acq_time = det.cam.acquire_time.get()
+
+    num_frame = np.ceil(exposure / acq_time)
+    
+    yield from bps.abs_set(det.images_per_set, num_frame, wait=True)
+    
+    yield from bps.abs_set(det.number_of_sets, num_exposure, wait=True)    
+
+    print("INFO: det = {}; acq_time = {}; exposure = {} (num frame = {}); num_exposure = {}".format(det.name,det.cam.acquire_time.get(),exposure,num_frame,num_exposure))  
+    
+    
+    return 
+
+
+
+
 
 def set_detector(det,exposure_time=1.0,num_images=1,sleep=0.5):
     if det.name == 'prosilica':
@@ -200,7 +222,7 @@ def print_det_keys(det_class):
     
     
     
-def counter(det,exposure_time=1, take_dark=False, num_dark = 3, num_bright = 2):
+def counter(det,exposure_time=1, take_dark=False, take_bright=True, num_dark = 3, num_bright = 2):
 
     ds = xr.Dataset()
 
@@ -212,7 +234,7 @@ def counter(det,exposure_time=1, take_dark=False, num_dark = 3, num_bright = 2):
 #         light1_off()
 #         light2_off()
 
-#         beam_off()
+        beam_off()
         uid_dark = RE(count([det],num=1))[0]
         
         if det.name == 'prosilica':
@@ -244,37 +266,40 @@ def counter(det,exposure_time=1, take_dark=False, num_dark = 3, num_bright = 2):
         dark_taken = 'false'
 
     
-#     beam_on()
-    set_detector(det,exposure_time=exposure_time,num_images=num_bright)
-#     laser_on()
-#     light1_on()
-#     light2_on()
-    
-    uid_bright = RE(count([det],num=1))[0]
-#     beam_off()
-    
-    if det.name == 'prosilica':
-        tiffs = get_tiff_list(hdr=db[-1])
-        t0 = fabio.open(tiffs[0]).data
-        img_bright = np.zeros((len(tiffs),t0.shape[0],t0.shape[1]))
-        for e,t in enumerate(tiffs):
-            img_bright[e,:,:] = fabio.open(tiffs[e]).data
+    if take_bright:
+        beam_on()
+        set_detector(det,exposure_time=exposure_time,num_images=num_bright)
+        uid_bright = RE(count([det],num=1))[0]
+        beam_off()
+        bright_taken = 'true'
     else:
-        img_bright = np.array(list(db[-1].data('%s_image'%(det.name))))
+        uid_bright = 'none'
+        bright_taken = 'false'
         
-#     tiff_cleaner(hdr=db[-1])
-    if len(img_bright.shape) == 4:
-        img_bright = img_bright.mean(axis=1)
-        img_bright = img_bright.mean(axis=0)
-    if len(img_bright.shape) == 3:
-        img_bright = img_bright.mean(axis=0)
         
-   
-    da_bright = xr.DataArray(data=img_bright.astype('float32'),
-              coords=[np.arange(img_bright.shape[0]), np.arange(img_bright.shape[1])],
-              dims=['pixel_y', 'pixel_x'],attrs=None
-             )
-    ds['bright'] = da_bright
+    if bright_taken == 'true':
+        if det.name == 'prosilica':
+            tiffs = get_tiff_list(hdr=db[-1])
+            t0 = fabio.open(tiffs[0]).data
+            img_bright = np.zeros((len(tiffs),t0.shape[0],t0.shape[1]))
+            for e,t in enumerate(tiffs):
+                img_bright[e,:,:] = fabio.open(tiffs[e]).data
+        else:
+            img_bright = np.array(list(db[-1].data('%s_image'%(det.name))))
+
+        if len(img_bright.shape) == 4:
+            img_bright = img_bright.mean(axis=1)
+            img_bright = img_bright.mean(axis=0)
+        if len(img_bright.shape) == 3:
+            img_bright = img_bright.mean(axis=0)
+
+
+        da_bright = xr.DataArray(data=img_bright.astype('float32'),
+                  coords=[np.arange(img_bright.shape[0]), np.arange(img_bright.shape[1])],
+                  dims=['pixel_y', 'pixel_x'],attrs=None
+                 )
+        ds['bright'] = da_bright
+        
 
 
     md={'type': 'count',
@@ -282,6 +307,7 @@ def counter(det,exposure_time=1, take_dark=False, num_dark = 3, num_bright = 2):
         'detector':det.name,
         'exposure_time':exposure_time,
         'dark_taken': dark_taken,
+        'bright_taken': bright_taken,
         'uid_dark':uid_dark,
         'num_dark':num_dark, 
         'uid_bright':uid_bright,   
@@ -342,7 +368,7 @@ def scanner(det,
 
     
     if take_dark:
-#         beam_off()
+        beam_off()
         set_detector(det,exposure_time=exposure_time,num_images=num_dark)
         uid_dark = RE(count([det],num=1))[0]
         
@@ -375,10 +401,10 @@ def scanner(det,
         dark_taken = 'false'
 
     
-#     beam_on()
+    beam_on()
     set_detector(det,exposure_time=exposure_time,num_images=1)
     uid_scan = RE(scan([det],motor,motor_start,motor_stop,motor_nstep))[0]
-#     beam_off()
+    beam_off()
     
     if det.name == 'prosilica':
         tiffs = get_tiff_list(hdr=db[-1])
