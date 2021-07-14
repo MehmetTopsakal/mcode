@@ -22,75 +22,6 @@ def configure_area_det(det,acq_time,exposure,num_exposure=1):
 
 
 
-def set_detector(det,exposure_time=1.0,num_images=1,sleep=0.5):
-    if det.name == 'prosilica':
-        det.proc.enable_filter.put(0,wait=True)
-        det.cam.acquire_time.put(exposure_time)
-        det.cam.acquire_period.put(0.5)     
-        if num_images > 1:
-            print('Multiple mode doesnt work well!!!')
-            det.cam.stage_sigs['image_mode'] = 'Multiple'
-            det.cam.num_images.put(num_images)
-            det.cam.image_mode.put(1)       
-        else:
-            det.cam.stage_sigs['image_mode'] = 'Single'
-            det.cam.num_images.put(1)
-            det.cam.image_mode.put(0)
-        det.cam.trigger_mode.put(0)
-        det.unstage()
-        time.sleep(sleep)    
-        
-    elif det.name == 'blackfly':
-        det.proc.enable_filter.put(0,wait=True)
-        det.cam.acquire_time.put(exposure_time)    
-        det.cam.acquire_period.put(exposure_time)     
-        if num_images > 1:
-            det.cam.stage_sigs['image_mode'] = 'Multiple'
-            det.cam.num_images.put(num_images)
-            det.cam.image_mode.put(1)
-        else:
-            det.cam.stage_sigs['image_mode'] = 'Single'
-            det.cam.num_images.put(1)
-            det.cam.image_mode.put(0)
-        det.cam.trigger_mode.put(0)
-        det.unstage()
-        time.sleep(sleep)
-        
-    elif det.name == 'emergent':
-        det.proc.enable_filter.put(0,wait=True)
-        det.cam.acquire_time.put(exposure_time)
-        det.cam.acquire_period.put(exposure_time)             
-        if num_images > 1:        
-            det.cam.stage_sigs['image_mode'] = 'Multiple'    
-            det.cam.stage_sigs['num_images'] = num_images
-            det.cam.num_images.put(num_images)  
-            det.cam.image_mode.put(1)        
-        else:
-            det.cam.stage_sigs['image_mode'] = 'Single'
-            det.cam.num_images.put(1)
-            det.cam.image_mode.put(0)
-#         det.cam.trigger_mode.put(0)
-        det.unstage()
-        time.sleep(sleep)
-        
-    elif det.name == 'dexela':
-        det.proc.enable_filter.put(0,wait=True)
-        det.cam.stage_sigs['image_mode'] = 'Multiple'        
-        det.cam.stage_sigs['trigger_mode'] = 'Int. Free Run'        
-        det.cam.acquire_time.put(exposure_time)
-        det.cam.acquire_period.put(exposure_time+0.02)
-        if num_images > 1:
-            det.cam.stage_sigs['image_mode'] = 'Multiple'
-            det.cam.num_images.put(num_images)
-            det.cam.image_mode.put(1)
-        else:
-            det.cam.stage_sigs['image_mode'] = 'Single'
-            det.cam.num_images.put(1)
-            det.cam.image_mode.put(0)
-        det.cam.trigger_mode.put(0)
-        det.unstage()
-        time.sleep(sleep)
-
         
 
         
@@ -217,8 +148,9 @@ def print_det_keys(det_class):
     
     
     
-    
-    
+"""  
+
+LEGACY:   
     
     
     
@@ -495,7 +427,81 @@ def ds_saver(ds,save_to,save_str='_',zlib=False,dtype='float32'):
     
     
     
-"""           
+
+
+
+
+def set_detector(det,exposure_time=1.0,num_images=1,sleep=0.5):
+    if det.name == 'prosilica':
+        det.proc.enable_filter.put(0,wait=True)
+        det.cam.acquire_time.put(exposure_time)
+        det.cam.acquire_period.put(0.5)     
+        if num_images > 1:
+            print('Multiple mode doesnt work well!!!')
+            det.cam.stage_sigs['image_mode'] = 'Multiple'
+            det.cam.num_images.put(num_images)
+            det.cam.image_mode.put(1)       
+        else:
+            det.cam.stage_sigs['image_mode'] = 'Single'
+            det.cam.num_images.put(1)
+            det.cam.image_mode.put(0)
+        det.cam.trigger_mode.put(0)
+        det.unstage()
+        time.sleep(sleep)    
+        
+    elif det.name == 'blackfly':
+        det.proc.enable_filter.put(0,wait=True)
+        det.cam.acquire_time.put(exposure_time)    
+        det.cam.acquire_period.put(exposure_time)     
+        if num_images > 1:
+            det.cam.stage_sigs['image_mode'] = 'Multiple'
+            det.cam.num_images.put(num_images)
+            det.cam.image_mode.put(1)
+        else:
+            det.cam.stage_sigs['image_mode'] = 'Single'
+            det.cam.num_images.put(1)
+            det.cam.image_mode.put(0)
+        det.cam.trigger_mode.put(0)
+        det.unstage()
+        time.sleep(sleep)
+        
+    elif det.name == 'emergent':
+        det.proc.enable_filter.put(0,wait=True)
+        det.cam.acquire_time.put(exposure_time)
+        det.cam.acquire_period.put(exposure_time)             
+        if num_images > 1:        
+            det.cam.stage_sigs['image_mode'] = 'Multiple'    
+            det.cam.stage_sigs['num_images'] = num_images
+            det.cam.num_images.put(num_images)  
+            det.cam.image_mode.put(1)        
+        else:
+            det.cam.stage_sigs['image_mode'] = 'Single'
+            det.cam.num_images.put(1)
+            det.cam.image_mode.put(0)
+#         det.cam.trigger_mode.put(0)
+        det.unstage()
+        time.sleep(sleep)
+        
+    elif det.name == 'dexela':
+        det.proc.enable_filter.put(0,wait=True)
+        det.cam.stage_sigs['image_mode'] = 'Multiple'        
+        det.cam.stage_sigs['trigger_mode'] = 'Int. Free Run'        
+        det.cam.acquire_time.put(exposure_time)
+        det.cam.acquire_period.put(exposure_time+0.02)
+        if num_images > 1:
+            det.cam.stage_sigs['image_mode'] = 'Multiple'
+            det.cam.num_images.put(num_images)
+            det.cam.image_mode.put(1)
+        else:
+            det.cam.stage_sigs['image_mode'] = 'Single'
+            det.cam.num_images.put(1)
+            det.cam.image_mode.put(0)
+        det.cam.trigger_mode.put(0)
+        det.unstage()
+        time.sleep(sleep)
+
+
+
 RE(bps.mv(Filters.flt1, 'Out')) 
 RE(bps.mv(Filters.flt2, 'Out'))
 RE(bps.mv(Filters.flt3, 'Out'))
