@@ -13,7 +13,7 @@ def configure_area_det(det,acq_time,exposure,num_exposure=1):
     
     yield from bps.abs_set(det.number_of_sets, num_exposure, wait=True)    
 
-    print("INFO: det = {}; acq_time = {}; exposure = {} (num frame = {}); num_exposure = {}".format(det.name,det.cam.acquire_time.get(),exposure,num_frame,num_exposure))  
+    print("INFO: \ndet = {}; acq_time = {}; exposure = {} (num frame = {}); num_exposure = {}".format(det.name,det.cam.acquire_time.get(),exposure,num_frame,num_exposure))  
     
     
     return 
@@ -25,13 +25,13 @@ def configure_area_det(det,acq_time,exposure,num_exposure=1):
         
 
         
-def beam_on():
+def beam_on(sleep=0.1):
     FastShutter.move(-7)
-    time.sleep(1)
+    time.sleep(sleep)
 
-def beam_off():
+def beam_off(sleep=0.1):
     FastShutter.move(-47)
-    time.sleep(1)
+    time.sleep(sleep)
     
     
         
@@ -141,7 +141,213 @@ def print_det_keys(det_class):
     
     
     
+def counter(det, 
+            acq_time,
+            exposure=1,
+            num_exposure=1,
+            expo_dark=0, 
+            expo_bright=0,            
+            ):
+
     
+    ds = xr.Dataset()
+
+    
+    if expo_dark>0:
+
+        beam_off()
+        RE(configure_area_det(det,acq_time,exposure=expo_dark,num_exposure=1))
+        uid = RE(count([det],num=1))[0]
+        
+        img = np.array(list(db[-1].data('%s_image'%(det.name))))
+
+        img = img.mean(axis=(0,1))
+        if det.name == 'prosilica':
+            img = np.mean(img,-1)
+        
+        da = xr.DataArray(data=img.astype('float32'),
+                  coords=[np.arange(img.shape[0]), np.arange(img.shape[1])],
+                  dims=['pixel_y', 'pixel_x'],attrs=dict(uid=uid,
+                                                         det=det.name,
+                                                         acq_time=acq_time,
+                                                         exposure=expo_dark)
+                              )
+        ds['dark'] = da
+        
+
+
+    if expo_bright>0:
+
+        beam_on()
+        RE(configure_area_det(det,acq_time,exposure=expo_bright,num_exposure=1))
+        uid = RE(count([det],num=1))[0]
+        beam_off()
+        
+        img = np.array(list(db[-1].data('%s_image'%(det.name))))
+
+        img = img.mean(axis=(0,1))
+        if det.name == 'prosilica':
+            img = np.mean(img,-1)
+
+        da = xr.DataArray(data=img.astype('float32'),
+                  coords=[np.arange(img.shape[0]), np.arange(img.shape[1])],
+                  dims=['pixel_y', 'pixel_x'],attrs=dict(uid=uid,
+                                                         det=det.name,
+                                                         acq_time=acq_time,
+                                                         exposure=expo_bright)
+                              )
+        ds['bright'] = da
+
+
+
+    md={'type': 'count',
+        'time': time.time(),   
+        'filter1':Filters.flt1.value,
+        'filter2':Filters.flt2.value,
+        'filter3':Filters.flt3.value,
+        'filter4':Filters.flt4.value, 
+        'mXBase':mXBase.position,
+        'mYBase':mYBase.position,
+        'mStackX':mStackX.position,
+        'mStackY':mStackY.position, 
+        'mStackZ':mStackZ.position,
+        'mPhi':mPhi.position,  
+        'mSlitsTop':mSlitsTop.position,     
+        'mSlitsBottom':mSlitsBottom.position,    
+        'mSlitsOutboard':mSlitsOutboard.position,   
+        'mSlitsInboard':mSlitsInboard.position,     
+        'mPitch':mPitch.position,       
+        'mRoll':mRoll.position,      
+        'mDexelaPhi':mDexelaPhi.position,       
+        'mQuestarX':mQuestarX.position,      
+        'mSigrayX':mSigrayX.position,    
+        'mSigrayY':mSigrayY.position,    
+        'mSigrayZ':mSigrayZ.position,    
+        'mSigrayPitch':mSigrayPitch.position,   
+        'mSigrayYaw':mSigrayYaw.position,     
+        'FastShutter':FastShutter.position, 
+        'RingCurrent':ring_current.get()
+       }
+
+    ds.attrs = md
+    
+    
+    return ds
+
+
+
+def scanner(det, 
+            motor,
+            acq_time,
+            exposure=1,
+            num_exposure=1,
+            expo_dark=0, 
+            expo_bright=0, 
+            
+            motor_start = -0.1,
+            motor_stop =  0.1,
+            motor_nstep = 11, 
+            
+            come_back = False
+
+            ):
+
+    
+    ds = xr.Dataset()
+    
+    motor_initial_pos = motor.position
+
+    
+    if expo_dark>0:
+
+        beam_off()
+        RE(configure_area_det(det,acq_time,exposure=expo_dark,num_exposure=1))
+        uid = RE(count([det],num=1))[0]
+        
+        img = np.array(list(db[-1].data('%s_image'%(det.name))))
+        if det.name == 'prosilica':
+            img = np.mean(img,-1)
+        img = img.mean(axis=(0,1))
+
+        da = xr.DataArray(data=img.astype('float32'),
+                  coords=[np.arange(img.shape[0]), np.arange(img.shape[1])],
+                  dims=['pixel_y', 'pixel_x'],attrs=dict(uid=uid,
+                                                         det=det.name,
+                                                         acq_time=acq_time,
+                                                         exposure=expo_dark)
+                              )
+        ds['dark'] = da
+        
+
+
+    if expo_bright>0:
+
+        beam_on()
+        RE(configure_area_det(det,acq_time,exposure=expo_bright,num_exposure=1))
+        uid = RE(scan([det],motor,motor_start,motor_stop,motor_nstep))[0]
+        beam_off()
+        
+        imgs = np.array(list(db[-1].data('%s_image'%(det.name))))
+        if det.name == 'prosilica':
+            imgs = np.mean(imgs,-1)
+        imgs = imgs.mean(axis=(1))
+        
+        motor_pos = np.linspace(motor_start,motor_stop,motor_nstep)
+
+        da = xr.DataArray(data=imgs.astype('float32'),
+                  coords=[motor_pos, np.arange(imgs.shape[1]), np.arange(imgs.shape[2])],
+                  dims=[motor.name,'pixel_y', 'pixel_x'],attrs=dict(uid=uid,
+                                                         det=det.name,
+                                                         acq_time=acq_time,
+                                                         exposure=expo_bright,
+                                                         motor=motor.name,
+                                                         motor_start=motor_start,
+                                                         motor_stop=motor_stop,
+                                                         motor_nstep=motor_nstep,
+                                                         motor_initial_pos=motor_initial_pos)
+                              )
+        ds['scan'] = da
+        
+        if come_back:
+            print('moving back')
+            motor.move(motor_initial_pos)
+
+
+
+    md={'type': 'scan',
+        'time': time.time(),   
+        'filter1':Filters.flt1.value,
+        'filter2':Filters.flt2.value,
+        'filter3':Filters.flt3.value,
+        'filter4':Filters.flt4.value, 
+        'mXBase':mXBase.position,
+        'mYBase':mYBase.position,
+        'mStackX':mStackX.position,
+        'mStackY':mStackY.position, 
+        'mStackZ':mStackZ.position,
+        'mPhi':mPhi.position,  
+        'mSlitsTop':mSlitsTop.position,     
+        'mSlitsBottom':mSlitsBottom.position,    
+        'mSlitsOutboard':mSlitsOutboard.position,   
+        'mSlitsInboard':mSlitsInboard.position,     
+        'mPitch':mPitch.position,       
+        'mRoll':mRoll.position,      
+        'mDexelaPhi':mDexelaPhi.position,       
+        'mQuestarX':mQuestarX.position,      
+        'mSigrayX':mSigrayX.position,    
+        'mSigrayY':mSigrayY.position,    
+        'mSigrayZ':mSigrayZ.position,    
+        'mSigrayPitch':mSigrayPitch.position,   
+        'mSigrayYaw':mSigrayYaw.position,     
+        'FastShutter':FastShutter.position, 
+        'RingCurrent':ring_current.get()
+       }
+
+    ds.attrs = md
+    
+    
+    return ds
+
     
     
     

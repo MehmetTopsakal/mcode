@@ -148,6 +148,23 @@ class DexelaDetectorCam(CamBase):
     use_gain = Cpt(EpicsSignal, 'DEXUseGain')
     use_offset = Cpt(EpicsSignal, 'DEXUseOffset')
 
+    wait_for_plugins = Cpt(EpicsSignal, 'WaitForPlugins',
+                           string=True, kind='config')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.stage_sigs['wait_for_plugins'] = 'Yes'
+
+    def ensure_nonblocking(self):
+        self.stage_sigs['wait_for_plugins'] = 'Yes'
+        for c in self.parent.component_names:
+            cpt = getattr(self.parent, c)
+            if cpt is self:
+                continue
+            if hasattr(cpt, 'ensure_nonblocking'):
+                print(f'cpt: {cpt.name}')
+                cpt.ensure_nonblocking()
+
 class DexelaDetector(AreaDetector):
     cam = Cpt(DexelaDetectorCam, 'cam1:',
               read_attrs=[],
@@ -195,7 +212,14 @@ class XPDTOMODexela(DexelaDetector):
     
     
 class DexelaContinuous(ContinuousAcquisitionTrigger, XPDTOMODexela):
-    pass
+    def make_data_key(self):
+        source = 'PV:{}'.format(self.prefix)
+        # This shape is expected to match arr.shape for the array.
+        shape = (self.number_of_sets.get(),
+                 self.cam.array_size.array_size_y.get(),
+                 self.cam.array_size.array_size_x.get())
+        return dict(shape=shape, source=source, dtype='array',
+                    external='FILESTORE:')
 
 # Dexela detector configurations:
 dexela_pv_prefix = 'XF:28IDD-ES:2{Det:DEX}'
@@ -208,9 +232,8 @@ dexela_c.cam.bin_x.kind = 'config'
 dexela_c.cam.bin_y.kind = 'config'
 dexela_c.detector_type.kind = 'config'
 dexela_c.stats1.kind = 'hinted'
-dexela_c.stats1.total.kind = 'hinted' 
-    
-    
+dexela_c.stats1.total.kind = 'hinted'
+dexela_c.cam.ensure_nonblocking()    
 
     
 #=========================================================================#
