@@ -9,8 +9,8 @@ mTopZ   =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Z}Mtr'    ,name='mTopZ')
 mPhi    =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Phi}Mtr'  ,name='mPhi')
 mRoll   =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Roll}Mtr' ,name='mRoll')
 mPitch  =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Pitch}Mtr',name='mPitch')
-mBaseX  =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Y}Mtr'    ,name='mBaseX')
-mBaseY  =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Xbase}Mtr',name='mBaseY')
+mBaseY  =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Y}Mtr'    ,name='mBaseY')
+mBaseX  =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Xbase}Mtr',name='mBaseX')
 
 # Dexela detector rotation
 mDexelaPhi  =  EpicsMotor('XF:28IDD-ES:2{Stg:Stack-Ax:Htth}Mtr',name='mDexelaPhi')
