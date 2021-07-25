@@ -13,43 +13,39 @@ def configure_area_det(det,acq_time,exposure,num_exposure=1):
     
     yield from bps.abs_set(det.number_of_sets, num_exposure, wait=True)    
 
-    print("INFO: \ndet = {}; acq_time = {}; exposure = {} (num frame = {}); num_exposure = {}".format(det.name,det.cam.acquire_time.get(),exposure,num_frame,num_exposure))  
+    print("{} is configured as: acq_time = {}; exposure = {} (num frames = {}); num_exposure = {}".format(det.name,det.cam.acquire_time.get(),exposure,num_frame,num_exposure))  
     
     
     return 
 
 
 
-
-
         
-
-        
-def beam_on(sleep=0.1):
-    FastShutter.move(-7)
+def beam_on(shutter_motor=FastShutter,sleep=0.1):
+    shutter_motor.move(-7,wait=True)
     time.sleep(sleep)
 
 def beam_off(sleep=0.1):
-    FastShutter.move(-47)
+    shutter_motor.move(-47,wait=True)
     time.sleep(sleep)
     
     
         
         
-def pud_switcher(ipdu,state='off',sleep=1.0, verbose=False):
+def pud_switcher(ipdu, state='off', sleep=1.0, verbose=False):
     
     pdus = (pdu1,pdu2,pdu3,pdu4)
     
-    if state == 'on':
-        current_state = pdus[ipdu].value
+    if state.lower() == 'on' or state == 1:
+        current_state = pdus[ipdu].get()
         if current_state == 1:
             if verbose:
                 print('it is already on!')
         else:
             pdus[ipdu].put(1)
             time.sleep(sleep)
-    elif state == 'off':
-        current_state = pdus[ipdu].value
+    if state.lower() == 'off' or state == 0:
+        current_state = pdus[ipdu].get()
         if current_state == 0:
             if verbose:
                 print('it is already off!')
@@ -59,46 +55,19 @@ def pud_switcher(ipdu,state='off',sleep=1.0, verbose=False):
             
             
 
-        
-        
-def get_tiff_list(hdr):
-
-    for name, doc in hdr.documents():       
-        if name=='start':
-            npts = doc.num_points           
-        if name=='resource':
-            fpp   = doc.resource_kwargs['frame_per_point'] 
-            tpath = os.path.join(doc.root,doc.resource_path)
-            fname = doc.resource_kwargs['filename'] 
-    tiffs = ['%s/%s_%6.6d.tiff'%(tpath,fname,i) for i in range(npts*fpp)] 
-    return tiffs
-            
-            
-            
-            
-def tiff_cleaner(hdr):
-
-    for name, doc in hdr.documents():       
-        if name=='start':
-            npts = doc.num_points           
-        if name=='resource':
-            fpp   = doc.resource_kwargs['frame_per_point'] 
-            tpath = os.path.join(doc.root,doc.resource_path)
-            fname = doc.resource_kwargs['filename'] 
-    tiffs = ['%s/%s_%6.6d.tiff'%(tpath,fname,i) for i in range(npts*fpp)] 
-    for t in tiffs:
-        os.remove(t)
-
 
         
         
-        
-def read_tiff_as_xarr(tiffpath,
-                      figsize=(6,6),
-                      robust=True,
-                      plot=False,
-                      cbar=False,
-                      mode = None):
+def read_tiff_as_xarray(tiffpath,
+                       figsize=(6,6),
+                       robust=True,
+                       plot=False,
+                       cbar=False,
+                       mode=None):
+    
+    """
+    Reads a tiff file as xarray
+    """
 
     if mode == 'prosilica':
         img = fabio.open(tiffpath).data
@@ -112,19 +81,27 @@ def read_tiff_as_xarr(tiffpath,
     if plot:
 
         fig = plt.figure(figsize=figsize)
+        
         ax = fig.add_subplot(1,1,1)
 
         if not cbar:
-            xp = da.plot.imshow(ax=ax,robust=robust,yincrease=False,cmap='Greys_r',
+            xp = da.plot.imshow(ax=ax,robust=robust,
+                                yincrease=False,
+                                cmap='Greys_r',
                                 add_colorbar=cbar)
         else:
-            xp = da.plot.imshow(ax=ax,robust=robust,yincrease=False,cmap='Greys_r',
-                                cbar_kwargs=dict( orientation='vertical',
-                                            pad=0.07, shrink=0.4, label='Intensity'))            
+            xp = da.plot.imshow(ax=ax,robust=robust,
+                                yincrease=False,
+                                cmap='Greys_r',
+                                cbar_kwargs=dict(orientation='vertical',
+                                            pad=0.07, 
+                                            shrink=0.4, 
+                                            label='Intensity'))            
+        
         xp.axes.set_aspect('equal', 'box')
      
         plt.tight_layout()
-        return da
+
     
     return da
             
@@ -143,10 +120,10 @@ def print_det_keys(det_class):
     
 def counter(det, 
             acq_time,
-            exposure=1,
             num_exposure=1,
             expo_dark=0, 
-            expo_bright=0,            
+            expo_bright=0, 
+            auto_off=True
             ):
 
     
@@ -156,7 +133,7 @@ def counter(det,
     if expo_dark>0:
 
         beam_off()
-        RE(configure_area_det(det,acq_time,exposure=expo_dark,num_exposure=1))
+        RE(configure_area_det(det,acq_time,exposure=expo_dark,num_exposure=num_exposure))
         uid = RE(count([det],num=1))[0]
         
         img = np.array(list(db[-1].data('%s_image'%(det.name))))
@@ -179,9 +156,11 @@ def counter(det,
     if expo_bright>0:
 
         beam_on()
-        RE(configure_area_det(det,acq_time,exposure=expo_bright,num_exposure=1))
+        RE(configure_area_det(det,acq_time,exposure=expo_bright,num_exposure=num_exposure))
         uid = RE(count([det],num=1))[0]
-        beam_off()
+        
+        if auto_off:
+            beam_off()
         
         img = np.array(list(db[-1].data('%s_image'%(det.name))))
 
@@ -202,10 +181,10 @@ def counter(det,
 
     md={'type': 'count',
         'time': time.time(),   
-        'filter1':Filters.flt1.value,
-        'filter2':Filters.flt2.value,
-        'filter3':Filters.flt3.value,
-        'filter4':Filters.flt4.value, 
+        'filter1':Filters.flt1.get(),
+        'filter2':Filters.flt2.get(),
+        'filter3':Filters.flt3.get(),
+        'filter4':Filters.flt4.get(), 
         'mXBase':mXBase.position,
         'mYBase':mYBase.position,
         'mStackX':mStackX.position,
@@ -226,7 +205,9 @@ def counter(det,
         'mSigrayPitch':mSigrayPitch.position,   
         'mSigrayYaw':mSigrayYaw.position,     
         'FastShutter':FastShutter.position, 
-        'RingCurrent':ring_current.get()
+        'RingCurrent':ring_current.get(),
+        'mHexapodsZ':mHexapodsZ.position,
+        'ePhi':ePhi.position,
        }
 
     ds.attrs = md
@@ -239,7 +220,6 @@ def counter(det,
 def scanner(det, 
             motor,
             acq_time,
-            exposure=1,
             num_exposure=1,
             expo_dark=0, 
             expo_bright=0, 
@@ -316,10 +296,10 @@ def scanner(det,
 
     md={'type': 'scan',
         'time': time.time(),   
-        'filter1':Filters.flt1.value,
-        'filter2':Filters.flt2.value,
-        'filter3':Filters.flt3.value,
-        'filter4':Filters.flt4.value, 
+        'filter1':Filters.flt1.get(),
+        'filter2':Filters.flt2.get(),
+        'filter3':Filters.flt3.get(),
+        'filter4':Filters.flt4.get(), 
         'mXBase':mXBase.position,
         'mYBase':mYBase.position,
         'mStackX':mStackX.position,
@@ -340,7 +320,9 @@ def scanner(det,
         'mSigrayPitch':mSigrayPitch.position,   
         'mSigrayYaw':mSigrayYaw.position,     
         'FastShutter':FastShutter.position, 
-        'RingCurrent':ring_current.get()
+        'RingCurrent':ring_current.get(),
+        'mHexapodsZ':mHexapodsZ.position,
+        'ePhi':ePhi.position,
        }
 
     ds.attrs = md
