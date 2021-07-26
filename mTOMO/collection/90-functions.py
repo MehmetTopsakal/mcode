@@ -114,7 +114,197 @@ def print_det_keys(det_class):
     
     
 
+
     
+    
+    
+    
+    
+def sample_picture_taker(
+    
+    cam1=prosilica_c,
+    cam1_acq_time=1,
+    cam1_exposure=1,
+
+    cam2=emergent_c,
+    cam2_acq_time=32,
+    cam2_exposure=32,
+    
+    plot=True,
+    figsize=(8,4),
+    vmin1=None,
+    vmax1=None,
+    vmin2=None,
+    vmax2=None,
+    title1_motor1=mPhi,
+    title1_motor2=mTopY,
+    title2_motor1=mBaseX,
+    title2_motor2=mBaseY,
+    ROI1=None,
+    axv1=0,
+    axh1=0,
+    ROI2=None,
+    axv2=0,
+    axh2=0,
+
+
+    save_to=None,
+    save_name=None    
+    
+    ):
+
+    
+    
+    RE(configure_area_det(cam1,acq_time=cam1_acq_time,exposure=cam1_exposure))
+    RE(configure_area_det(cam2,acq_time=cam2_acq_time,exposure=cam2_exposure))
+    
+    
+    uid = RE(count([cam1,cam2],num=1))[0]
+    
+    run = raw[-1]
+    ds  = run.primary.read()
+    
+    
+
+    if plot:
+
+        fig = plt.figure(figsize=figsize,dpi=96)
+
+        ax = fig.add_subplot(1,2,1)
+
+        img_1 = ds['%s_image'%cam1.name]
+
+        if len(img_1.shape) == 5:
+               img_1 = img_1.mean(axis=-1)
+        img_1 = img_1.mean(axis=1)
+
+        img_1.isel(time=0).plot.imshow(robust=True,
+                                       yincrease=False,
+                                       ax=ax,
+                                       add_colorbar=True,
+                                       cmap='Greys_r',
+                                       vmin=vmin1, vmax=vmax1,
+                                       cbar_kwargs=dict(orientation='vertical',
+                                       pad=0.01, shrink=0.5))
+        ax.set_aspect('equal') 
+        ax.set_title('%s @ %.3f | %s @ %.3f'\
+                     %(title1_motor1.name,title1_motor1.position,title1_motor2.name,title1_motor2.position),
+                    fontsize=8)
+
+        ax.axvline(x=axv1,linestyle='--',color='r',alpha=0.5)
+        ax.axhline(y=axh1,linestyle=':',color='g',alpha=0.5)
+
+        if ROI1 is None:
+            pass
+        else:
+            ax.set_xlim(left=ROI1[0][0],right=ROI1[0][1])
+            ax.set_ylim(bottom=ROI1[1][1],top=ROI1[1][0])
+
+
+
+
+        ax = fig.add_subplot(1,2,2)
+
+        img_2 = ds['%s_image'%cam2.name]
+
+        if len(img_2.shape) == 5:
+               img_2 = img_2.mean(axis=-1)
+        img_2 = img_2.mean(axis=1)
+
+        img_2.isel(time=0).plot.imshow(robust=True,
+                                       yincrease=False,
+                                       ax=ax,
+                                       add_colorbar=True,
+                                       cmap='Greys_r',
+                                       vmin=vmin2, vmax=vmax2,
+                                       cbar_kwargs=dict(orientation='vertical',
+                                       pad=0.01, shrink=0.5))
+        ax.set_aspect('equal') 
+        ax.set_title('%s @ %.3f | %s @ %.3f'\
+                     %(title2_motor1.name,title2_motor1.position,title2_motor2.name,title2_motor2.position),
+                    fontsize=8)
+
+        ax.axvline(x=axv2,linestyle='--',color='b',alpha=0.5)
+        ax.axhline(y=axh2,linestyle=':',color='m',alpha=0.5)
+
+        if ROI1 is None:
+            pass
+        else:
+            ax.set_xlim(left=ROI2[0][0],right=ROI2[0][1])
+            ax.set_ylim(bottom=ROI2[1][1],top=ROI2[1][0])
+
+
+        plt.tight_layout()        
+        
+        
+    
+
+
+    md={'type':'sample_picture',
+        'uid':uid,
+        'time': time.time(),   
+        'filter1':Filters.flt1.get(),
+        'filter2':Filters.flt2.get(),
+        'filter3':Filters.flt3.get(),
+        'filter4':Filters.flt4.get(), 
+        'mBaseX':mBaseX.position,
+        'mBaseY':mBaseY.position,
+        'mTopX':mTopX.position,
+        'mTopY':mTopY.position, 
+        'mTopZ':mTopZ.position,
+        'mPhi':mPhi.position,  
+        'mSlitsTop':mSlitsTop.position,     
+        'mSlitsBottom':mSlitsBottom.position,    
+        'mSlitsOutboard':mSlitsOutboard.position,   
+        'mSlitsInboard':mSlitsInboard.position,     
+        'mPitch':mPitch.position,       
+        'mRoll':mRoll.position,      
+        'mDexelaPhi':mDexelaPhi.position,       
+        'mQuestarX':mQuestarX.position,      
+        'mSigrayX':mSigrayX.position,    
+        'mSigrayY':mSigrayY.position,    
+        'mSigrayZ':mSigrayZ.position,    
+        'mSigrayPitch':mSigrayPitch.position,   
+        'mSigrayYaw':mSigrayYaw.position,     
+        'FastShutter':FastShutter.position, 
+        'RingCurrent':ring_current.get(),
+        'mHexapodsZ':mHexapodsZ.position,
+        'ePhi':ePhi.position,
+
+
+        'cam1':cam1.name,
+        'cam1_acq_time':cam1_acq_time,
+        'cam1_exposure':cam1_exposure,
+
+        'cam2':cam2.name,
+        'cam2_acq_time':cam2_acq_time,
+        'cam2_exposure':cam2_exposure,        
+        
+        'axv1':axv1,
+        'axh1':axh1,
+        'axv2':axv2,
+        'axh2':axh2,
+       }
+
+    ds.attrs = md
+    
+    
+    
+    if save_to:
+        comp = dict(zlib=True, dtype='float32')
+        encoding = {var: comp for var in ds.data_vars}
+        if save_name is None:
+            save_name = 'sample_picture'
+        ds.to_netcdf('%s/%d_%s.nc'%(save_to,ds.attrs['time'],save_name), encoding=encoding) 
+        print('%s/%d_%s.nc'%(save_to,ds.attrs['time'],save_name))    
+    
+    
+    return ds
+
+
+
+
+
     
     
     

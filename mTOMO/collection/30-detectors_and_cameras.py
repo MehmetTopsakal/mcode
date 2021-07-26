@@ -239,7 +239,7 @@ try:
     dexela_c.cam.ensure_nonblocking()    
 except Exception as exc:
     print(exc)
-    print('\n unable to initiate dexela detector. Something is wrong... ')
+    print('\n unable to initialize dexela detector. Something is wrong... ')
     pass
 
 
@@ -296,6 +296,14 @@ class XPDTOMOBlackfly(BlackflyDetector):
         self.stage_sigs.update([(self.cam.trigger_mode, 'Off')])
         
 class BlackflyContinuous(ContinuousAcquisitionTrigger, XPDTOMOBlackfly):
+    def make_data_key(self):
+        source = 'PV:{}'.format(self.prefix)
+        # This shape is expected to match arr.shape for the array.
+        shape = (self.number_of_sets.get(),
+                 self.cam.array_size.array_size_y.get(),
+                 self.cam.array_size.array_size_x.get())
+        return dict(shape=shape, source=source, dtype='array',
+                    external='FILESTORE:')
     pass
 
 try:
@@ -314,7 +322,7 @@ try:
     blackfly_c.stats1.total.kind = 'hinted' 
 except Exception as exc:
     print(exc)
-    print('\n unable to initiate blackfly camera. Something is wrong... ')
+    print('\n unable to initialize blackfly camera. Something is wrong... ')
     pass        
         
         
@@ -373,6 +381,14 @@ class XPDTOMOEmergent(EmergentDetector):
         self.stage_sigs.update([(self.cam.color_mode, 'Mono')])
         
 class EmergentContinuous(ContinuousAcquisitionTrigger, XPDTOMOEmergent):
+    def make_data_key(self):
+        source = 'PV:{}'.format(self.prefix)
+        # This shape is expected to match arr.shape for the array.
+        shape = (self.number_of_sets.get(),
+                 self.cam.array_size.array_size_y.get(),
+                 self.cam.array_size.array_size_x.get())
+        return dict(shape=shape, source=source, dtype='array',
+                    external='FILESTORE:')
     pass
 
 try:
@@ -391,7 +407,7 @@ try:
     emergent_c.stats1.total.kind = 'hinted'  
 except Exception as exc:
     print(exc)
-    print('\n unable to initiate emergent camera. Something is wrong... ')
+    print('\n unable to initialize emergent camera. Something is wrong... ')
     pass
 
 
@@ -454,6 +470,14 @@ class XPDTOMOProsilica(ProsilicaDetector):
         self.stage_sigs.update([(self.cam.trigger_mode, 'Free Run')])
         
 class ProsilicaContinuous(ContinuousAcquisitionTrigger, XPDTOMOProsilica):
+    def make_data_key(self):
+        source = 'PV:{}'.format(self.prefix)
+        # This shape is expected to match arr.shape for the array.
+        shape = (self.number_of_sets.get(),
+                 self.cam.array_size.array_size_y.get(),
+                 self.cam.array_size.array_size_x.get(),3)
+        return dict(shape=shape, source=source, dtype='array',
+                    external='FILESTORE:')
     pass
 
 try:
@@ -472,7 +496,7 @@ try:
     prosilica_c.stats1.total.kind = 'hinted' 
 except Exception as exc:
     print(exc)
-    print('\n unable to initiate prosilca detector. Something is wrong... ')
+    print('\n unable to initialize prosilca detector. Something is wrong... ')
     pass
 
 
