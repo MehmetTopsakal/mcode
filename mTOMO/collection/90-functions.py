@@ -479,14 +479,15 @@ def scanner(det,
         da = xr.DataArray(data=imgs.astype('float32'),
                   coords=[motor_pos, np.arange(imgs.shape[1]), np.arange(imgs.shape[2])],
                   dims=[motor.name,'pixel_y', 'pixel_x'],attrs=dict(uid=uid,
-                                                         det=det.name,
-                                                         acq_time=acq_time,
-                                                         exposure=expo_bright,
-                                                         motor=motor.name,
-                                                         motor_start=motor_start,
-                                                         motor_stop=motor_stop,
-                                                         motor_nstep=motor_nstep,
-                                                         motor_initial_pos=motor_initial_pos)
+                                                                    det=det.name,
+                                                                    acq_time=acq_time,
+                                                                    exposure=expo_bright,
+                                                                    motor=motor.name,
+                                                                    motor_start=motor_start,
+                                                                    motor_stop=motor_stop,
+                                                                    motor_nstep=motor_nstep,
+                                                                    motor_initial_pos=motor_initial_pos
+                                                                    )
                               )
         ds['scan'] = da
         
