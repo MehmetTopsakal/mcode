@@ -16,7 +16,6 @@ export PYTHONPATH=~/code:$PYTHONPATH
 
 
 
-
 HOSTNAME=`hostname`
 case $HOSTNAME in
 

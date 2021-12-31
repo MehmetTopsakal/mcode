@@ -21,11 +21,15 @@ def configure_area_det(det,acq_time,exposure,num_exposure=1):
 
 
         
-def beam_on(shutter_motor=FastShutter,sleep=0.1):
+def beam_on(shutter_motor=None,sleep=0.1):
+    if shutter_motor is None:
+       shutter_motor = FastShutter
     shutter_motor.move(-7,wait=True)
     time.sleep(sleep)
 
-def beam_off(shutter_motor=FastShutter,sleep=0.1):
+def beam_off(shutter_motor=None,sleep=0.1):
+    if shutter_motor is None:
+       shutter_motor = FastShutter  
     shutter_motor.move(-47,wait=True)
     time.sleep(sleep)
     

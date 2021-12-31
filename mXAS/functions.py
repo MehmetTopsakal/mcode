@@ -21,6 +21,10 @@ def get_fl(pattern,mode=['ISS']):
                 l = linecache.getline(f, mode[1])
                 dt = datetime.datetime.strptime('%s_%s'%(l.split()[3],l.split()[4]),
                                                 "%m/%d/%Y_%H:%M:%S")
+            elif mode[0] == 'ISS_2021_3':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime('%s_%s'%(l.split()[2],l.split()[3]),
+                                                "%m/%d/%Y_%H:%M:%S")
             elif mode[0] == 'QAS':
                 l = linecache.getline(f, mode[1])
                 dt = datetime.datetime.strptime('%s_%s'%(l.split()[3],l.split()[4]),
@@ -80,24 +84,24 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
             Es.append(d[0])   
         elif mode == '20ID_98':  
             MUs_f.append(d[9]/d[8])
-            MUs_r.append(d[9]/d[8]) #for compatibility issues
+            #MUs_r.append(d[9]/d[8]) #for compatibility issues
             Es.append(d[0])         
         elif mode == '20ID_186':  
             MUs_f.append(d[18]/d[6])
-            MUs_r.append(d[18]/d[6]) #for compatibility issues
+            #MUs_r.append(d[18]/d[6]) #for compatibility issues
             Es.append(d[0])    
         elif mode == '20ID_128':  
             MUs_f.append(d[12]/d[8])
-            MUs_r.append(d[12]/d[8]) #for compatibility issues
+            #MUs_r.append(d[12]/d[8]) #for compatibility issues
             Es.append(d[0])    
         elif mode == '20ID_108':  
             MUs_f.append(d[10]/d[8])
-            MUs_r.append(d[10]/d[8]) #for compatibility issues
+            #MUs_r.append(d[10]/d[8]) #for compatibility issues
             Es.append(d[0])   
 
     if plot:
 
-        if plot_ref:
+        if plot_ref and MUs_r != []:
             fig = plt.figure(figsize=(12,6),dpi=96)
             ax1 = fig.add_subplot(1,2,1)
             ax2 = fig.add_subplot(1,2,2)
@@ -117,7 +121,7 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         if legend:
             ax1.legend(fontsize=8,loc='best',frameon=False)
 
-        if plot_ref:
+        if plot_ref and MUs_r != []:
         
             ax2 = fig.add_subplot(1,2,2)
             for e,i in enumerate(MUs_r):
@@ -129,23 +133,32 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         
     
     # for spectra that have different length (usually ISS data)    
-    arr_f = np.array([i[:len(d0[0])-cut] for i in MUs_f])
-    arr_r = np.array([i[:len(d0[0])-cut] for i in MUs_r])
+
+
     E = Es[0][:len(d0[0])-cut]+Eshift
 
     ds = xr.Dataset()
-    try: 
-        da_r = xr.DataArray(data=arr_r[:,imin:imax],
-                          coords=[np.arange(len(fl_in)), E[imin:imax]],
-                          dims=['scan_num', 'energy']) 
-        da_r.scan_num.attrs["files"] = fl    
-        ds['mu_ref']   = deepcopy(da_r)
+    try:
+        arr_f = np.array([i[:len(d0[0])-cut] for i in MUs_f])
         da_f = xr.DataArray(data=arr_f[:,imin:imax],
                           coords=[np.arange(len(fl_in)), E[imin:imax]],
                           dims=['scan_num', 'energy']) 
         da_f.scan_num.attrs["files"] = fl
         ds['mu_fluo']  = deepcopy(da_f)
-    except:
+
+        try:
+            arr_r = np.array([i[:len(d0[0])-cut] for i in MUs_r])
+            da_r = xr.DataArray(data=arr_r[:,imin:imax],
+                              coords=[np.arange(len(fl_in)), E[imin:imax]],
+                              dims=['scan_num', 'energy'])
+            da_r.scan_num.attrs["files"] = fl
+            ds['mu_ref']   = deepcopy(da_r)
+        except:
+            pass
+
+
+    except Exception as exc:
+        print(exc)
         print('Unable to create dataset. Something is wrong')
         if plot and legend:
             ax.legend(fontsize=8,loc='best',frameon=False)
@@ -173,7 +186,7 @@ def deglitch(da_in,fl_in,glitches,plot=True):
     
     if plot:
         fig = plt.figure(figsize=(10,4))
-        ax = fig.add_subplot('121')
+        ax = fig.add_subplot(1,2,1)
         for e,i in enumerate(da_dg):
             i.plot.line('-',ms=1,ax=ax,label=fl_in[e][1])
         for e,i in enumerate(da_in):
@@ -333,19 +346,21 @@ def normalize_and_flatten(da_in,e0=None,pre1=None,pre2=None,
 
 
         if show_edge_regions:
-            ax = fig.add_axes([0.18, 0.22, 0.12, 0.3])
+            ax = fig.add_axes([0.20, 0.2, 0.12, 0.3])
             ax.plot(group_ave1.energy,group_ave1.flat,'-r',lw=2)  
             ax.plot(group_ave2.energy,group_ave1.flat,'--b',lw=2)   
             ax.set_xlim([e0-20,e0])
             ax.set_ylim(top=0.5)
             ax.set_title('pre-edge')
+            ax.set_yticklabels([])
 
-            ax = fig.add_axes([0.34, 0.22, 0.12, 0.3])
+            ax = fig.add_axes([0.34, 0.2, 0.12, 0.3])
             ax.plot(group_ave1.energy,group_ave1.flat,'-r',lw=2)   
             ax.plot(group_ave2.energy,group_ave1.flat,'--b',lw=2)   
             ax.set_xlim([e0,e0+20])
             ax.set_ylim(bottom=0.5)
             ax.set_title('post-edge')
+            ax.set_yticklabels([])
         
 
         elif show_raw:
@@ -373,7 +388,7 @@ def normalize_and_flatten(da_in,e0=None,pre1=None,pre2=None,
         autobk(group_ave2, rbkg=rbkg, kweight=kweight)  
         xftf(group_ave2, kmin=kmin, kmax=kmax, dk=dk, kwindow=window) 
 
-        ds.attrs['rbkg']= rbkg     
+        ds.attrs['rbkg']= rbkg
         ds.attrs['kweight']= kweight
         ds.attrs['kmin']= kmin
         ds.attrs['kmax']= kmax
@@ -403,6 +418,8 @@ def normalize_and_flatten(da_in,e0=None,pre1=None,pre2=None,
             ax = fig.add_axes([0.77, 0.60, 0.2, 0.3])
             ax.plot(group_ave1.k, group_ave1.k*group_ave1.k*group_ave1.chi,'-r')
             ax.plot(group_ave2.k, group_ave2.k*group_ave2.k*group_ave2.chi,'--b')
+            ax.axvline(x=kmin,linestyle=':',color='k')
+            ax.axvline(x=kmax,linestyle=':',color='k')
             ax.set_xlabel('$\it{k}$ ($\AA^{-1}$)')
             ax.set_ylabel('$\it{k^{2}}$ $\chi$ ($\it{k}$) ($\AA^{-2}$)')    
 

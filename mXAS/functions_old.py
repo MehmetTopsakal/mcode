@@ -78,14 +78,14 @@ def read_as_ds_ISS(fl_in,imin=0,imax=-1,plot=True,legend=False,cut=1):
     if plot:
         fig = plt.figure(figsize=(12,7))
         
-        ax = fig.add_subplot('121')
+        ax = fig.add_subplot(1,2,1)
         for e,i in enumerate(MUs_f):
             ax.plot(Es[e],i)
         ax.set_xlabel('E (eV)')
         ax.set_ylabel('$\mu(E)$')
         ax.set_title('Fluoresence')
         
-        ax = fig.add_subplot('122')
+        ax = fig.add_subplot(1,2,2)
         for e,i in enumerate(MUs_r):
             ax.plot(Es[e],i,label=fl_in[e][1]+' (%d %d)'%(e,len(Es[e])))
         ax.set_xlabel('E (eV)')
@@ -151,7 +151,7 @@ def read_as_ds_12BM(fl_in,imin=0,imax=-1,plot=True):
 
     if plot:
         fig = plt.figure(figsize=(10,5))
-        ax = fig.add_subplot('121')
+        ax = fig.add_subplot(1,2,1)
         for e,i in enumerate(ds['mu_fluo']):
             i.plot.line('-o',ms=1,ax=ax,label=fl_in[e][1])
         ax.set_title(None)
@@ -159,7 +159,7 @@ def read_as_ds_12BM(fl_in,imin=0,imax=-1,plot=True):
         ax.set_ylabel('$\mu(E)$')
         ax.legend(fontsize=8,ncol=1)
         ax.set_title('Fluoresence')
-        ax = fig.add_subplot('122')
+        ax = fig.add_subplot(1,2,2)
         for e,i in enumerate(ds['mu_ref']):
             i.plot.line('-o',ms=1,ax=ax,label=fl_in[e][1])
         ax.set_title(None)
@@ -207,7 +207,7 @@ def read_as_ds_BMM(fl_in,imin=0,imax=-1,plot=True):
 
     if plot:
         fig = plt.figure(figsize=(10,5))
-        ax = fig.add_subplot('121')
+        ax = fig.add_subplot(1,2,1)
         for e,i in enumerate(ds['mu_fluo']):
             i.plot.line('-o',ms=1,ax=ax,label=fl_in[e][1])
         ax.set_title(None)
@@ -215,7 +215,7 @@ def read_as_ds_BMM(fl_in,imin=0,imax=-1,plot=True):
         ax.set_ylabel('$\mu(E)$')
         ax.legend(fontsize=8,ncol=1)
         ax.set_title('Fluoresence')
-        ax = fig.add_subplot('122')
+        ax = fig.add_subplot(1,2,2)
         for e,i in enumerate(ds['mu_ref']):
             i.plot.line('-o',ms=1,ax=ax,label=fl_in[e][1])
         ax.set_title(None)
@@ -247,7 +247,7 @@ def read_as_ds_20ID(fl_in,imin=0,imax=-1,plot=True,col=9):
     if plot:
         fig = plt.figure(figsize=(10,5))
         try:
-            ax = fig.add_subplot('121')
+            ax = fig.add_subplot(1,2,2)
             for e,i in enumerate(MUs_f):
                 ax.plot(E,i,'-o',ms=1,label=fl_in[e][1])
             ax.set_title(None)
@@ -257,7 +257,7 @@ def read_as_ds_20ID(fl_in,imin=0,imax=-1,plot=True,col=9):
             ax.set_title('Fluoresence') 
             plt.tight_layout()
         except:
-            ax = fig.add_subplot('121')
+            ax = fig.add_subplot(1,2,2)
             for e,i in enumerate(MUs_f):
                 ax.plot(i,'-o',ms=1,label=fl_in[e][1])
             ax.set_title(None)
@@ -304,7 +304,7 @@ def deglitch(da_in,fl_in,glitches,plot=True):
     
     if plot:
         fig = plt.figure(figsize=(10,4))
-        ax = fig.add_subplot('121')
+        ax = fig.add_subplot(1,2,1)
         for e,i in enumerate(da_dg):
             i.plot.line('-',ms=1,ax=ax,label=fl_in[e][1])
         for e,i in enumerate(da_in):
