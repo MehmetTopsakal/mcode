@@ -1,9 +1,0 @@
-&projwfc
-outdir='./tmp',
-DeltaE=0.025,
-Emin = -80,
-Emax = 20,
-ngauss=0,
-degauss=0.003674930882447527
-/
-
