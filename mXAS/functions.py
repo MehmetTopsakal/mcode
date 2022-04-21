@@ -42,7 +42,8 @@ def get_fl(pattern,mode=['ISS']):
                 
             fl_in.append([dt.timestamp(),dt,f])   
 
-        except:
+        except Exception as exc:
+            print(exc)
             print('Unable to read %s'%(f))
 
         
@@ -55,7 +56,7 @@ def get_fl(pattern,mode=['ISS']):
 
 
 def read_as_ds(fl_in,mode='ISS',Eshift=0,
-               imin=0,imax=-1,plot=True,legend=False,plot_ref=True,
+               imin=0,imax=-1,plot=True,legend=False,plot_ref=True,xlim=None,
                cut=0):
     Es = []
     MUs_f = []
@@ -97,7 +98,11 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         elif mode == '20ID_108':  
             MUs_f.append(d[10]/d[8])
             #MUs_r.append(d[10]/d[8]) #for compatibility issues
-            Es.append(d[0])   
+            Es.append(d[0])
+        elif mode == '20ID_65ref':  
+            MUs_f.append(-np.log(d[6]/d[5]))
+            MUs_r.append(-np.log(d[6]/d[5]))    
+            Es.append(d[0]) 
 
     if plot:
 
@@ -111,7 +116,7 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         
 
         for e,i in enumerate(MUs_f):
-            ax1.plot(Es[e],i,label=fl_in[e][1]+' (%d %d)'%(e,len(Es[e])))
+            ax1.plot(Es[e],i,label=fl_in[e][1]+' (ind:%d time:%s)'%(e,fl_in[e][0]))
         ax1.set_xlabel('E (eV)')
         ax1.set_ylabel('$\mu(E)$')
         ax1.set_title('Fluoresence')
@@ -125,11 +130,14 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         
             ax2 = fig.add_subplot(1,2,2)
             for e,i in enumerate(MUs_r):
-                ax2.plot(Es[e],i,label=fl_in[e][1]+' (%d %d)'%(e,len(Es[e])))
+                ax2.plot(Es[e],i,label=fl_in[e][1]+' (ind:%d time:%s)'%(e,fl_in[e][0]))
             ax2.set_xlabel('E (eV)')
             ax2.set_title('Reference')   
             ax2.axvline(x=Es[e][imin],linestyle='--',color='k')
             ax2.axvline(x=Es[e][imax],linestyle='--',color='k')
+            ax2.set_xlim(xlim)
+            
+        ax1.set_xlim(xlim)
         
     
     # for spectra that have different length (usually ISS data)    
@@ -161,7 +169,8 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         print(exc)
         print('Unable to create dataset. Something is wrong')
         if plot and legend:
-            ax.legend(fontsize=8,loc='best',frameon=False)
+            ax1.legend(fontsize=8,loc='best',frameon=False)
+            ax1.set_xlim(xlim)
             
 
     return ds
