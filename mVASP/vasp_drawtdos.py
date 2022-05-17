@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use('Agg') # see http://matplotlib.org/faq/usage_faq.html#what-is-a-backend
 
 from mVASP import readdoscar  
-import mSMOOTH
+#import mSMOOTH
 import os    
 import sys
 import numpy as np

@@ -52,7 +52,7 @@ def readvasprunxml(file=None):
         if line.startswith(' <parameters>'):                   
             ENCUT  = float(lines[i+7].split()[2][:-4])                  # ENCUT
             NBANDS = int(lines[i+12].split()[3][:-4])                 # NBANDS
-            NELECT = float(lines[i+13].split()[2][:-4])                # NELECT
+            NELECT = float(lines[i+15].split()[2][:-4])                # NELECT
             
         if line.startswith('   <separator name="electronic spin" >'):
             NSPIN   = int(lines[i+1][-6:-5])         

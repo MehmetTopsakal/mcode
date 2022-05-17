@@ -116,6 +116,26 @@ class mXANES:
         
         self.E = None
         self.I = None
+
+
+    def Interpolate0(self,iterprange,stepsize=0.1):
+        if self.E0[0] > iterprange[0]:
+            # left padding
+            npts = int((self.E0[0]-iterprange[0])/stepsize)+1
+            x_patch = np.linspace(iterprange[0],self.E0[0]-stepsize,npts)
+            y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[0])
+            self.E0 = np.concatenate((x_patch,self.E0.T), axis=0)
+            self.I0 = np.concatenate((y_patch,self.I0.T), axis=0)
+        if self.E0[-1] < iterprange[1]:
+            # right padding
+            npts = int((iterprange[1]-self.E0[-1])/stepsize)+2
+            x_patch = np.linspace(self.E0[-1],iterprange[1],npts)
+            y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[-1])
+            self.E0 = np.concatenate((self.E0.T,x_patch), axis=0)
+            self.I0 = np.concatenate((self.I0.T,y_patch), axis=0)
+        f = interpolate.interp1d(self.E0,self.I0,kind='linear')
+        self.E0 = np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
+        self.I0 = f(self.E0)
         
                                             
     def Interpolate(self,iterprange,stepsize=0.1):               

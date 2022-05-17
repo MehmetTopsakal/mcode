@@ -7,7 +7,7 @@ before | b )
 
 rm -f CHG CHGCAR-u-d CONTCAR DOSCAR  EIGENVAL  IBZKPT OSZICAR  OUTCAR  p4vasp.log  pdos.eps *.mat pdos.mat *vasp.out  vasprun.xml \
 IBZKPT PCDAT XDATCAR ELFCAR *.result.out *.error.err .*.err   STOPCAR* result.out *.eps *.ps *.pdf *bands.dat \
-vasprun.npz FXC*.tmp AECCAR0 AECCAR1 AECCAR2 LOCPOT .*.nodes *.vasp.out .panfs.* _ERROR* $2 $3 $4 $5 $6 $7 $8
+vasprun.npz FXC*.tmp AECCAR0 AECCAR1 AECCAR2 LOCPOT .*.nodes *.vasp.out .panfs.* _ERROR vaspout.h5 PROCAR REPORT $2 $3 $4 $5 $6 $7 $8
 ;;
 
 
