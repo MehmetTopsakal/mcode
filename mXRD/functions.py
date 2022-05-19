@@ -145,9 +145,10 @@ def integrator(img,
                include_mask=False, # if maskis to be included in xr dataset
                ROIs = None, # region of interest for azimuthal integration
                phases = None, # phases for peak indexing.
+               export_fig_as = None,
                export_i1d_as=None, # filename for exporting 1d plot
-               export_i1d_mode='xy', # for two-theta-vs-intensity use xy, for dspacing-vs-intensity use d here.
-               ):
+               export_i1d_mode='xy', # for two-theta-vs-intensity use xy, for dspacing-vs-intensity use d here. 
+               plt_close_all=False):
 
 
     if flip_mask:
@@ -381,6 +382,11 @@ def integrator(img,
     if export_fig_as is not None:
         plt.savefig(export_fig_as,dpi=196)
 
+    if plt_close_all:
+        plt.close('all')
+
+
+
     if export_i1d_as is not None:
 
         if export_i1d_mode == 'xy' and unit == 'q_A^-1':
@@ -439,6 +445,7 @@ def integrator(img,
                'phases':phases,
                'export_i1d_as':export_i1d_as,
                'export_i1d_mode':export_i1d_mode,
+               'plt_close_all':plt_close_all
                }
 
     return ds
