@@ -43,8 +43,23 @@ from scipy.stats import rankdata
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++            
 class mXANES:
     
-    def __init__(self, data=None, data_loadfrom=None, srange=None, structure=None, vcncutoff=5.0, ca=None, Eonset=None, 
-                 xanesid=None, source=None, edge=None, multiplicity=1):
+    def __init__(self,
+                 data=None,
+                 data_loadfrom=None,
+                 srange=None,
+                 xshift=0,
+                 yshift=0,
+                 yscale=1,
+                 element=None,
+                 edge=None,
+                 edge_energy=None,
+                 eshift_to_edge=True,
+                 xanesid=None,
+                 source=None,
+                 structure=None,
+                 ca=None,
+                 multiplicity=1,
+                 ):
         
         super(mXANES, self).__init__()
 
@@ -60,28 +75,44 @@ class mXANES:
             self.E0 = np.array(data[0])
             self.I0 = np.array(data[1])
             
+
+
+
+        if element is None:
+            self.element = 'not_set'
+        else:
+            self.element = element
+
+        if edge is None:
+            self.edge = 'not_set'
+        else:
+            self.edge = edge
+
+        if edge_energy is None:
+            try:
+                import xraydb
+                xdb = xraydb.xray_edge(element,edge)
+                self.edge_energy = xdb.energy
+            except:
+                self.edge_energy = self.E0[0]
+
+        if eshift_to_edge:
+            self.E0 = self.E0 - self.edge_energy
+
+
+
         if srange:
             sel = (self.E0 >= srange[0]) & (self.E0 <= srange[1])
-            self.E0 = self.E0[sel]
-            self.I0 = self.I0[sel]            
-
-        # Energy offset
-        if Eonset is None:
-            self.Eonset = self.E0[0]
+            self.E0, self.I0 = xshift+self.E0[sel], yshift+yscale*self.I0[sel]
         else:
-            self.Eonset = Eonset
+            self.E0, self.I0 = xshift+self.E0, yshift+yscale*self.I0
+
             
         # XANES id
         if xanesid is None:
             self.xanesid = 'not_set'
         else:
             self.xanesid = xanesid 
-            
-        # XANES edge
-        if edge is None:
-            self.edge = 'not_set'
-        else:
-            self.edge = edge         
             
         # source
         if source is None:
@@ -116,46 +147,94 @@ class mXANES:
         
         self.E = None
         self.I = None
-
-
-    def Interpolate0(self,iterprange,stepsize=0.1):
-        if self.E0[0] > iterprange[0]:
-            # left padding
-            npts = int((self.E0[0]-iterprange[0])/stepsize)+1
-            x_patch = np.linspace(iterprange[0],self.E0[0]-stepsize,npts)
-            y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[0])
-            self.E0 = np.concatenate((x_patch,self.E0.T), axis=0)
-            self.I0 = np.concatenate((y_patch,self.I0.T), axis=0)
-        if self.E0[-1] < iterprange[1]:
-            # right padding
-            npts = int((iterprange[1]-self.E0[-1])/stepsize)+2
-            x_patch = np.linspace(self.E0[-1],iterprange[1],npts)
-            y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[-1])
-            self.E0 = np.concatenate((self.E0.T,x_patch), axis=0)
-            self.I0 = np.concatenate((self.I0.T,y_patch), axis=0)
-        f = interpolate.interp1d(self.E0,self.I0,kind='linear')
-        self.E0 = np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
-        self.I0 = f(self.E0)
         
-                                            
-    def Interpolate(self,iterprange,stepsize=0.1):               
+
+
+
+    def Interpolate0(self,iterprange,stepsize=0.1,xshift=0,yscale=1):
+
+        self.E = self.E0.copy()
+        self.I = self.I0.copy()
+
         if self.E[0] > iterprange[0]:
             # left padding
             npts = int((self.E[0]-iterprange[0])/stepsize)+1
             x_patch = np.linspace(iterprange[0],self.E[0]-stepsize,npts)
             y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[0])
             self.E = np.concatenate((x_patch,self.E.T), axis=0)
-            self.I = np.concatenate((y_patch,self.I.T), axis=0)                       
+            self.I = np.concatenate((y_patch,self.I.T), axis=0)
         if self.E[-1] < iterprange[1]:
-            # right padding            
+            # right padding
             npts = int((iterprange[1]-self.E[-1])/stepsize)+2
             x_patch = np.linspace(self.E[-1],iterprange[1],npts)
             y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[-1])
             self.E = np.concatenate((self.E.T,x_patch), axis=0)
-            self.I = np.concatenate((self.I.T,y_patch), axis=0)             
+            self.I = np.concatenate((self.I.T,y_patch), axis=0)
+
         f = interpolate.interp1d(self.E,self.I,kind='linear')
-        self.E = np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )      
-        self.I = f(self.E) 
+        self.E = xshift+np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
+        self.I = yscale*f(self.E)
+
+
+
+
+    def Interpolate(self,iterprange,stepsize=0.1,xshift=0,yscale=1):
+
+
+        if self.E[0] > iterprange[0]:
+            # left padding
+            npts = int((self.E[0]-iterprange[0])/stepsize)+1
+            x_patch = np.linspace(iterprange[0],self.E[0]-stepsize,npts)
+            y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[0])
+            self.E = np.concatenate((x_patch,self.E.T), axis=0)
+            self.I = np.concatenate((y_patch,self.I.T), axis=0)
+        if self.E[-1] < iterprange[1]:
+            # right padding
+            npts = int((iterprange[1]-self.E[-1])/stepsize)+2
+            x_patch = np.linspace(self.E[-1],iterprange[1],npts)
+            y_patch=np.empty(len(x_patch)); y_patch.fill(self.I[-1])
+            self.E = np.concatenate((self.E.T,x_patch), axis=0)
+            self.I = np.concatenate((self.I.T,y_patch), axis=0)
+
+        f = interpolate.interp1d(self.E,self.I,kind='linear')
+        self.E = xshift+np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
+        self.I = yscale*f(self.E)
+
+
+
+
+
+    def broaden(self, g_sigma=None,g_fwhm=None, l_gamma=None,l_fwhm=None, lvl=None,cut=1,yminshift=True):
+
+        if g_sigma:
+            self.E, self.I = mconv(self.E, self.I).Gaussian(sigma=g_sigma)
+        elif g_fwhm:
+            self.E, self.I = mconv(self.E, self.I).Gaussian(fwhm=g_fwhm)
+
+        if l_gamma:
+            self.E, self.I = mconv(self.E, self.I).Lorentzian(gamma=l_gamma)
+        elif l_fwhm:
+            self.E, self.I = mconv(self.E, self.I).Lorentzian(fwhm=l_fwhm)
+
+        if lvl:
+            if len(lvl) == 1:
+                self.E, self.I = mconv(self.E, self.I).LorentzianVL(A=lvl[0],B=None,offset=None)
+            elif len(lvl) == 2:
+                self.E, self.I = mconv(self.E, self.I).LorentzianVL(A=lvl[0],B=lvl[1],offset=None)
+            else:
+                self.E, self.I = mconv(self.E, self.I).LorentzianVL(A=lvl[0],B=lvl[1],offset=lvl[2])
+
+        self.E, self.I = self.E[cut:-cut], self.I[cut:-cut]
+
+        if yminshift:
+            self.I = self.I - min(self.I)
+
+
+
+
+
+
+
                 
     def FindPeaks(self,xin=None,yin=None,srangep=None):        
         if (xin is None) or (yin is None):
@@ -177,6 +256,9 @@ class mXANES:
     def yscale_by(self,yscale):
         self.I = self.I*yscale
         
+
+
+
     def normalize_to(self,nstr):
         if nstr == 'max':            
             self.I = self.I/max(self.I)
@@ -187,53 +269,44 @@ class mXANES:
 
 
             
-    def broaden0(self, g_sigma=None,g_fwhm=None, l_gamma=None,l_fwhm=None, lvl=None):
-         
-        if g_sigma:
-            self.E0, self.I0 = mconv(self.E0, self.I0).Gaussian(sigma=g_sigma)
-        elif g_fwhm:
-            self.E0, self.I0 = mconv(self.E0, self.I0).Gaussian(fwhm=g_fwhm)
-            
-        if l_gamma:
-            self.E0, self.I0 = mconv(self.E0, self.I0).Lorentzian(gamma=l_gamma)            
-        elif l_fwhm:
-            self.E0, self.I0 = mconv(self.E0, self.I0).Lorentzian(fwhm=l_fwhm)      
-                          
-        if lvl:            
-            if len(lvl) == 1:
-                self.E0, self.I0 = mconv(self.E0, self.I0).LorentzianVL(A=lvl[0],B=None,offset=None)
-            elif len(lvl) == 2:
-                self.E0, self.I0 = mconv(self.E0, self.I0).LorentzianVL(A=lvl[0],B=lvl[1],offset=None)               
-            else:
-                self.E0, self.I0 = mconv(self.E0, self.I0).LorentzianVL(A=lvl[0],B=lvl[1],offset=lvl[2])  
+
+
+
+
+
+
+
 
 
  
-    def transform(self,srange=None,irange=None,x0shift=False,y0shift=False,
-                  normalize='max',xshift=None,std=False):        
-        self.E = self.E0.copy()
-        self.I = self.I0.copy()        
-        if x0shift:
-            self.E = self.E -self.Eonset                        
-        if xshift:
-            self.E = self.E + xshift            
-        if irange:
-            self.Interpolate(irange)                  
-        if y0shift:
-            self.I = self.I -self.I[0]              
-        if normalize == 'max':            
-            self.I = self.I/max(self.I)
-        elif normalize == 'tail':
-            self.I = self.I/self.I[-1]
-        elif normalize == 'none':
-            self.I = self.I         
-        else:
-            self.I = self.I/max(self.I) 
+    #def transform(self,srange=None,irange=None,x0shift=False,y0shift=False,
+                  #normalize='max',xshift=None,std=False,uscale=1.0):
+        #self.E = self.E0.copy()
+        #self.I = self.I0.copy()
+        #if x0shift:
+            #self.E = self.E -self.Eonset
+        #if xshift:
+            #self.E = self.E + xshift
+        #if irange:
+            #self.Interpolate(irange)
+        #if y0shift:
+            #self.I = self.I -self.I[0]
+        #if normalize == 'max':
+            #self.I = self.I/max(self.I)
+        #elif normalize == 'tail':
+            #self.I = self.I/self.I[-1]
+        #elif normalize == 'none':
+            #self.I = self.I
+        #else:
+            #self.I = self.I/max(self.I)
             
-        if std:
-            self.I = (self.I-np.mean(self.I))/np.std(self.I)
-                        
-        self.rank = rankdata(self.I,method='average') / len(self.I)
+        #if std:
+            #self.I = (self.I-np.mean(self.I))/np.std(self.I)
+
+
+        #self.I = self.I*uscale
+
+        #self.rank = rankdata(self.I,method='average') / len(self.I)
             
             
     def get_nn(self, nnradius=10.01, axin=None, yshift=0, ms=9, lp='k-',ts=0, text_off=False, labels_off=False, atoms_off=False):
@@ -273,7 +346,7 @@ class mXANES:
                     astr = 'mult.={:d}\nvcn=na'.format(self.multiplicity)
                     
                 if not text_off:
-                    axin.annotate(astr,(-3,ts+yshift-0.1), fontsize=10, weight='bold')
+                    axin.annotate(astr,(1,ts+yshift-0.1), fontsize=10, weight='bold')
 
                 ss = []; ds = []
                 for i in self.env:
@@ -292,7 +365,7 @@ class mXANES:
                 if text_off:
                     axin.set_xlim([-0.5,21])
                 else:
-                    axin.set_xlim([-3.5,21])
+                    axin.set_xlim([-0.5,21])
                     
                 if not labels_off:
                     axin.set_xlabel('Neighbour index #');
@@ -573,7 +646,7 @@ def read_xanes(path,absorption_specie,order='eof',skip_missing=False,symprec=0.0
                 fo = 'ocean_{:03d}_{}-K'.format(indices[i][0]+1,absorption_specie)                     
                 ff = 'feff_{:03d}_{}-K'.format(indices[i][0]+1,absorption_specie)  
                 
-                if order is 'eo':                                   
+                if order == 'eo':                                   
                     if os.path.isdir(fe):
                         os.chdir(fe)  
                         pload = pickle.load(open('xanes.pkl', 'rb'))
@@ -593,7 +666,7 @@ def read_xanes(path,absorption_specie,order='eof',skip_missing=False,symprec=0.0
                             os.chdir(here)                        
                             raise FileNotFoundError(fe+' is not available in '+path)                 
 
-                if order is 'oe':                                    
+                if order == 'oe':                                    
                     if os.path.isdir(fo):
                         os.chdir(fo)  
                         pload = pickle.load(open('xanes.pkl', 'rb'))
@@ -613,7 +686,7 @@ def read_xanes(path,absorption_specie,order='eof',skip_missing=False,symprec=0.0
                             os.chdir(here)                        
                             raise FileNotFoundError(fo+' is not available in '+path)  
                                                         
-                if order is 'eof':                                   
+                if order == 'eof':                                   
                     if os.path.isdir(fe):
                         os.chdir(fe)  
                         pload = pickle.load(open('xanes.pkl', 'rb'))
@@ -638,7 +711,7 @@ def read_xanes(path,absorption_specie,order='eof',skip_missing=False,symprec=0.0
                             os.chdir(here)                        
                             raise FileNotFoundError(fe+' is not available in '+path)                                      
 
-                if order is 'f':                                    
+                if order == 'f':                                    
                     if os.path.isdir(ff):
                         os.chdir(ff)  
                         pload = pickle.load(open('xanes.pkl', 'rb'))
@@ -653,7 +726,7 @@ def read_xanes(path,absorption_specie,order='eof',skip_missing=False,symprec=0.0
                             os.chdir(here)                        
                             raise FileNotFoundError(ff+' is not available in '+path)                              
 
-                if order is 'o':                                    
+                if order == 'o':                                    
                     if os.path.isdir(fo):
                         os.chdir(fo)  
                         pload = pickle.load(open('xanes.pkl', 'rb'))
@@ -668,7 +741,7 @@ def read_xanes(path,absorption_specie,order='eof',skip_missing=False,symprec=0.0
                             os.chdir(here)                        
                             raise FileNotFoundError(fo+' is not available in '+path)                                
 
-                if order is 'e':                                    
+                if order == 'e':                                    
                     if os.path.isdir(fe):
                         os.chdir(fe)  
                         pload = pickle.load(open('xanes.pkl', 'rb'))
