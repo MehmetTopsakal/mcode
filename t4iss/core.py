@@ -130,7 +130,7 @@ class mXANES:
         if structure:
             try:               
                 self.ca = structure[0][structure[1]].species_string            
-                nnfinder = VoronoiNN(cutoff=vcncutoff,allow_pathological=True)
+                nnfinder = VoronoiNN(allow_pathological=True)
                 vcn = nnfinder.get_cn(structure[0], structure[1], use_weights=True)
                 self.vcn = vcn
                 self.structure = [structure[0],structure[1],vcn]
@@ -151,7 +151,7 @@ class mXANES:
 
 
 
-    def Interpolate0(self,iterprange,stepsize=0.1,xshift=0,yscale=1):
+    def Interpolate0(self,iterprange,stepsize=0.1,xshift=0,yscale=1,normalize_to=None):
 
         self.E = self.E0.copy()
         self.I = self.I0.copy()
@@ -175,11 +175,16 @@ class mXANES:
         self.E = xshift+np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
         self.I = yscale*f(self.E)
 
+        if normalize_to is not None:
+            if normalize_to == 'tail':
+                self.I = self.I/self.I[-1]
+            elif normalize_to == 'max':
+                self.I = self.I/max(self.I)
 
 
 
-    def Interpolate(self,iterprange,stepsize=0.1,xshift=0,yscale=1):
 
+    def Interpolate(self,iterprange,stepsize=0.1,xshift=0,yscale=1,normalize_to=None):
 
         if self.E[0] > iterprange[0]:
             # left padding
@@ -199,6 +204,12 @@ class mXANES:
         f = interpolate.interp1d(self.E,self.I,kind='linear')
         self.E = xshift+np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
         self.I = yscale*f(self.E)
+
+        if normalize_to is not None:
+            if normalize_to == 'tail':
+                self.I = self.I/self.I[-1]
+            elif normalize_to == 'max':
+                self.I = self.I/max(self.I)
 
 
 
