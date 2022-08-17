@@ -41,8 +41,8 @@ def read_epsilon(folder='.',
         plt.legend()
         plt.tight_layout()
 
-    if save_fig:
-        plt.savefig("%s/EPSILON_BSE-%s.pdf"%(folder,fstr))
+        if save_fig:
+            plt.savefig("%s/EPSILON_BSE-%s.pdf"%(folder,fstr))
 
     return da
 
