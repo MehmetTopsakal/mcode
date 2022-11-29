@@ -1,8 +1,21 @@
 
+
+import os,sys,datetime
+import glob,linecache,shutil
+import numpy as np
+import xarray as xr
+
+import matplotlib.pyplot as plt
+
 from larch.io import read_ascii,read_athena
 from larch.xafs import find_e0,pre_edge,autobk,xftf
 from larch import Group
 import larch
+
+from copy import deepcopy
+
+
+
 
 def get_fl(pattern,mode=['ISS']):
     
@@ -18,6 +31,10 @@ def get_fl(pattern,mode=['ISS']):
         try:
         
             if mode[0] == 'ISS':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime('%s_%s'%(l.split()[2],l.split()[3]),
+                                                "%m/%d/%Y_%H:%M:%S")
+            if mode[0] == 'ISS_old':
                 l = linecache.getline(f, mode[1])
                 dt = datetime.datetime.strptime('%s_%s'%(l.split()[3],l.split()[4]),
                                                 "%m/%d/%Y_%H:%M:%S")
@@ -55,92 +72,112 @@ def get_fl(pattern,mode=['ISS']):
 
 
 
-def read_as_ds(fl_in,mode='ISS',Eshift=0,
-               imin=0,imax=-1,plot=True,legend=False,plot_ref=True,xlim=None,
+def read_as_ds(fl_in,
+               mode='ISS',
+               sdd_cols=[9,9+4,9+4+4,9+4+4+4],
+               Eshift=0,
+               imin=0,
+               imax=-1,
+               plot=True,
+               legend=False,
+               plot_ref=True,plot_fluo=True,
+               xlim=None,
                cut=0):
     Es = []
     MUs_f = []
     MUs_r = []
-    
+
     d0 = np.loadtxt(fl_in[0][1],unpack=True)
-    
+
     read_data = []
     for i in fl_in:
         d = np.loadtxt(i[1],unpack=True)
         if mode == 'ISS':
             MUs_f.append(d[4]/d[1])
-            MUs_r.append(-np.log(d[3]/d[2]))    
+            MUs_r.append(-np.log(d[3]/d[2]))
             Es.append(d[0])
-        if mode == 'QAS':
-            MUs_f.append(d[1]/d[2])
-            MUs_r.append(np.log(d[1]/d[3]))    
+        elif mode == 'ISS_SDD':
+            MUs_f.append(-(d[sdd_cols[0]]+d[sdd_cols[1]]+d[sdd_cols[2]]+d[sdd_cols[3]])/d[1])
+            MUs_r.append(-np.log(d[3]/d[2]))
             Es.append(d[0])
-        elif mode == 'BMM':        
+        elif mode == 'QAS':
+            # MUs_f.append(d[1]/d[2])
+            # MUs_r.append(np.log(d[1]/d[3]))
+            MUs_f.append(d[4]/d[1])
+            MUs_r.append(-np.log(d[2]/d[1]))
+            Es.append(d[0])
+        elif mode == 'BMM':
             MUs_f.append(d[3])
-            MUs_r.append(-np.log(d[6]/d[4]))    
+            #MUs_r.append(-np.log(d[6]/d[4]))
+            MUs_r.append(-np.log(d[6]/d[5]))
             Es.append(d[0])
-        elif mode == '12BM':        
-            MUs_f.append(d[9]/d[2])   
-            MUs_r.append(d[7]/d[2])    
-            Es.append(d[0])   
-        elif mode == '20ID_98':  
+        elif mode == '12BM':
+            MUs_f.append(d[9]/d[2])
+            MUs_r.append(d[7]/d[2])
+            Es.append(d[0])
+        elif mode == '20ID_98':
             MUs_f.append(d[9]/d[8])
             #MUs_r.append(d[9]/d[8]) #for compatibility issues
-            Es.append(d[0])         
-        elif mode == '20ID_186':  
+            Es.append(d[0])
+        elif mode == '20ID_186':
             MUs_f.append(d[18]/d[6])
             #MUs_r.append(d[18]/d[6]) #for compatibility issues
-            Es.append(d[0])    
-        elif mode == '20ID_128':  
+            Es.append(d[0])
+        elif mode == '20ID_128':
             MUs_f.append(d[12]/d[8])
             #MUs_r.append(d[12]/d[8]) #for compatibility issues
-            Es.append(d[0])    
-        elif mode == '20ID_108':  
+            Es.append(d[0])
+        elif mode == '20ID_108':
             MUs_f.append(d[10]/d[8])
             #MUs_r.append(d[10]/d[8]) #for compatibility issues
             Es.append(d[0])
-        elif mode == '20ID_65ref':  
+        elif mode == '20ID_65ref':
             MUs_f.append(-np.log(d[6]/d[5]))
-            MUs_r.append(-np.log(d[6]/d[5]))    
-            Es.append(d[0]) 
+            MUs_r.append(-np.log(d[6]/d[5]))
+            Es.append(d[0])
 
     if plot:
 
-        if plot_ref and MUs_r != []:
+        if plot_fluo and plot_ref:
             fig = plt.figure(figsize=(12,6),dpi=96)
-            ax1 = fig.add_subplot(1,2,1)
-            ax2 = fig.add_subplot(1,2,2)
-        else:
+            ax_f = fig.add_subplot(1,2,1)
+            ax_r = fig.add_subplot(1,2,2)
+        elif plot_fluo and not plot_ref:
             fig = plt.figure(figsize=(8,6),dpi=96)
-            ax1 = fig.add_subplot(1,1,1)
-        
+            ax_f = fig.add_subplot(1,1,1)
+        elif plot_ref and not plot_fluo:
+            fig = plt.figure(figsize=(8,6),dpi=96)
+            ax_r = fig.add_subplot(1,1,1)
 
-        for e,i in enumerate(MUs_f):
-            ax1.plot(Es[e],i,label=fl_in[e][1]+' (ind:%d time:%s)'%(e,fl_in[e][0]))
-        ax1.set_xlabel('E (eV)')
-        ax1.set_ylabel('$\mu(E)$')
-        ax1.set_title('Fluoresence')
-        ax1.axvline(x=Es[e][imin],linestyle='--',color='k')
-        ax1.axvline(x=Es[e][imax],linestyle='--',color='k')
+        if plot_fluo:
+            for e,i in enumerate(MUs_f):
+                ax_f.plot(Es[e],i,label=fl_in[e][1]+' (ind:%d time:%s)'%(e,fl_in[e][0]))
+            ax_f.set_xlabel('E (eV)')
+            ax_f.set_ylabel('$\mu(E)$')
+            ax_f.set_title('Fluoresence')
+            ax_f.axvline(x=Es[e][imin],linestyle='--',color='k')
+            ax_f.axvline(x=Es[e][imax],linestyle='--',color='k')
+            ax_f.set_xlim(xlim)
+
+        if plot_ref:
+            for e,i in enumerate(MUs_r):
+                ax_r.plot(Es[e],i,label=fl_in[e][1]+' (ind:%d time:%s)'%(e,fl_in[e][0]))
+            ax_r.set_xlabel('E (eV)')
+            ax_r.set_ylabel('$\mu(E)$')
+            ax_r.set_title('Reference')
+            ax_r.axvline(x=Es[e][imin],linestyle='--',color='k')
+            ax_r.axvline(x=Es[e][imax],linestyle='--',color='k')
+            ax_r.set_xlim(xlim)
 
         if legend:
-            ax1.legend(fontsize=8,loc='best',frameon=False)
+            if plot_ref:
+                ax_r.legend(fontsize=8,loc='best',frameon=False)
+            if plot_fluo:
+                ax_f.legend(fontsize=8,loc='best',frameon=False)
 
-        if plot_ref and MUs_r != []:
-        
-            ax2 = fig.add_subplot(1,2,2)
-            for e,i in enumerate(MUs_r):
-                ax2.plot(Es[e],i,label=fl_in[e][1]+' (ind:%d time:%s)'%(e,fl_in[e][0]))
-            ax2.set_xlabel('E (eV)')
-            ax2.set_title('Reference')   
-            ax2.axvline(x=Es[e][imin],linestyle='--',color='k')
-            ax2.axvline(x=Es[e][imax],linestyle='--',color='k')
-            ax2.set_xlim(xlim)
-            
-        ax1.set_xlim(xlim)
-        
-    
-    # for spectra that have different length (usually ISS data)    
+
+
+    # for spectra that have different length (usually ISS data)
 
 
     E = Es[0][:len(d0[0])-cut]+Eshift
@@ -150,8 +187,8 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
         arr_f = np.array([i[:len(d0[0])-cut] for i in MUs_f])
         da_f = xr.DataArray(data=arr_f[:,imin:imax],
                           coords=[np.arange(len(fl_in)), E[imin:imax]],
-                          dims=['scan_num', 'energy']) 
-        da_f.scan_num.attrs["files"] = fl
+                          dims=['scan_num', 'energy'])
+        da_f.scan_num.attrs["files"] = fl_in
         ds['mu_fluo']  = deepcopy(da_f)
 
         try:
@@ -159,7 +196,7 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
             da_r = xr.DataArray(data=arr_r[:,imin:imax],
                               coords=[np.arange(len(fl_in)), E[imin:imax]],
                               dims=['scan_num', 'energy'])
-            da_r.scan_num.attrs["files"] = fl
+            da_r.scan_num.attrs["files"] = fl_in
             ds['mu_ref']   = deepcopy(da_r)
         except:
             pass
@@ -168,10 +205,12 @@ def read_as_ds(fl_in,mode='ISS',Eshift=0,
     except Exception as exc:
         print(exc)
         print('Unable to create dataset. Something is wrong')
-        if plot and legend:
-            ax1.legend(fontsize=8,loc='best',frameon=False)
-            ax1.set_xlim(xlim)
-            
+        if plot_fluo and legend :
+            ax_f.legend(fontsize=8,loc='best',frameon=False)
+            ax_f.set_xlim(xlim)
+        if plot_ref and legend :
+            ax_r.legend(fontsize=8,loc='best',frameon=False)
+            ax_r.set_xlim(xlim)
 
     return ds
 
@@ -219,7 +258,7 @@ def normalize_and_flatten(da_in,e0=None,pre1=None,pre2=None,
                           rbkg=1.0,kweight=1,kmin=2,kmax=10,dk=0.1,window='hanning',
                           ave_method='mean',xlim=None,
                           plot=True,figsize=(12,7),
-                          show_edge_regions=True, show_raw=True,
+                          show_edge_regions=True, show_raw=True,raw_plot_axes=[0.25, 0.25, 0.2, 0.45],
                           legend=False,show_std=True): 
 
 
@@ -373,7 +412,7 @@ def normalize_and_flatten(da_in,e0=None,pre1=None,pre2=None,
         
 
         elif show_raw:
-            ax = fig.add_axes([0.25, 0.25, 0.2, 0.45])
+            ax = fig.add_axes(raw_plot_axes)
 
             for e,i in enumerate(da_mus):
                 i.plot.line('-',ms=1,ax=ax,label=da_in.scan_num.attrs['files'][e][1].split('/')[-1])

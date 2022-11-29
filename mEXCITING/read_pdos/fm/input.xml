@@ -1,0 +1,43 @@
+<input>
+<title>CrCl2</title>
+
+<structure autormt="true" speciespath="/data/software/_src/exciting/default/species">
+    <crystal scale="1.88972612456">
+        <basevect> -0.000000 -0.000000 3.488450 </basevect>
+        <basevect> 5.984840 -0.000000 -0.000000 </basevect>
+        <basevect> -0.000000 6.643920 -0.000000 </basevect>
+    </crystal>
+    <species speciesfile="Cr.xml">
+        <atom coord=" 0.000000 0.000000 0.000000 " bfcmt="0.0 0.0  -2.0" />
+        <atom coord=" 0.500000 0.500000 0.500000 " bfcmt="0.0 0.0  -2.0" />
+    </species>
+    <species speciesfile="Cl.xml">
+        <atom coord=" 0.000000 0.274700 0.360100 "/>
+        <atom coord=" 0.000000 0.725300 0.639900 "/>
+        <atom coord=" 0.500000 0.774700 0.139900 "/>
+        <atom coord=" 0.500000 0.225300 0.860100 "/>
+    </species>
+</structure>
+    
+
+<groundstate do="fromfile"
+    xctype="GGA_PBE_SOL"
+    rgkmax="7.0"
+    ngridk="16 8 8"
+    epsocc="1.0d-6"
+    nempty="200">
+    <spin/>
+</groundstate>
+
+<properties>
+<dos
+    nsmdos="1"
+    winddos="-1.1024792647342583 3.307437794202775"
+    lmirep="true"
+    nwdos="1201"
+    >
+</dos>
+</properties>
+
+
+</input>

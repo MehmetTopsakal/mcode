@@ -42,6 +42,12 @@ def twotheta_to_d(twotheta,wavelength):
     t = 2*np.sin(rad)
     d = (wavelength)/t
     return d
+def tth_wl1_to_wl2(tth1,wl1=0.187,wl2=0.4592):
+    """
+    scales TwoTheta1 with wavelength1 to TwoTheta1 with wavelength2
+    """
+    q = twotheta_to_q(np.deg2rad(tth_in), wl1)
+    return np.rad2deg(q_to_twotheta(q,wl2))
 
 
 
@@ -123,7 +129,7 @@ def integrator(img,
                median_filter_size=-1, #if >1, we apply median filter on raw 2D image to get rid of bad pixels
                npt=4000, # number of radial points
                npt_azim=360, # number of azimuthal points
-               method='cython', # integration method. see ai.integrate1d?
+               method='csr', # integration method. see ai.integrate1d?
                radial_range=(1,10), # integration range
                unit="q_A^-1",  # integration unit. For two-theta-vs-intensity plot, change to 2th_deg
                figsize=None, # user provided figure size
@@ -145,10 +151,10 @@ def integrator(img,
                include_mask=False, # if maskis to be included in xr dataset
                ROIs = None, # region of interest for azimuthal integration
                phases = None, # phases for peak indexing.
-               export_fig_as = None,
                export_i1d_as=None, # filename for exporting 1d plot
-               export_i1d_mode='xy', # for two-theta-vs-intensity use xy, for dspacing-vs-intensity use d here. 
-               plt_close_all=False):
+               export_i1d_mode='xy', # for two-theta-vs-intensity use xy, for dspacing-vs-intensity use d here.
+               export_fig_as=None
+               ):
 
 
     if flip_mask:
@@ -211,6 +217,8 @@ def integrator(img,
     if (plot_img and plot_i1d and plot_i2d):
         if figsize is None:
             fig = plt.figure(figsize=(10,5),dpi=dpi)
+        else:
+            fig = plt.figure(figsize=figsize,dpi=dpi)
         ax_img = fig.add_subplot(1,2,1)
         ax_i2d = fig.add_subplot(2,2,2)
         ax_i1d = fig.add_subplot(2,2,4,sharex=ax_i2d)
@@ -257,7 +265,7 @@ def integrator(img,
         if jupyter_style_i2dplot:
             jupyter.display(img,ax=ax_img)
             if mask is not None:
-                ax_img.imshow(mask,alpha=0.1,cmap='Greys')
+                ax_img.imshow(mask,alpha=0.3,cmap='Greys')
             ax_img.set_xlabel('pixel_x')
             ax_img.set_ylabel('pixel_y')
         else:
@@ -266,10 +274,10 @@ def integrator(img,
                         yincrease=False,
                         add_colorbar=True,
                         cbar_kwargs=dict(orientation='vertical',
-                        pad=0.02, shrink=0.6, label=None))
+                        pad=0.02, shrink=0.5, label=None))
             ax_img.set_aspect('equal')
             if mask is not None:
-                ax_img.imshow(mask,alpha=0.1,cmap='Greys')
+                ax_img.imshow(mask,alpha=0.3,cmap='Greys')
             ax_img.set_title(title)
 
 
@@ -382,11 +390,6 @@ def integrator(img,
     if export_fig_as is not None:
         plt.savefig(export_fig_as,dpi=196)
 
-    if plt_close_all:
-        plt.close('all')
-
-
-
     if export_i1d_as is not None:
 
         if export_i1d_mode == 'xy' and unit == 'q_A^-1':
@@ -445,7 +448,6 @@ def integrator(img,
                'phases':phases,
                'export_i1d_as':export_i1d_as,
                'export_i1d_mode':export_i1d_mode,
-               'plt_close_all':plt_close_all
                }
 
     return ds
