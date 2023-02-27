@@ -11,7 +11,7 @@ alias grep='grep --color=auto'
 export PATH=~/code/mBASH:$PATH
 
 # -- PYTHONPATHS
-export PYTHONPATH=~/code:$PYTHONPATH
+# export PYTHONPATH=~/code:$PYTHONPATH
 
 
 
@@ -20,13 +20,8 @@ HOSTNAME=`hostname`
 case $HOSTNAME in
 
 
-LNE-170365 )
-    export PATH=~/code/_local/think:$PATH
-    export OMP_NUM_THREADS=4
-    source /opt/intel/oneapi/setvars.sh
-    alias VESTA=/home/mt/software/VESTA/VESTA-gtk3/VESTA
-    export LD_LIBRARY_PATH=/home/mt/software/HDF5/lib:$LD_LIBRARY_PATH
-
+lnc-170365 )
+    export OMP_NUM_THREADS=6
 ;;
 
 
