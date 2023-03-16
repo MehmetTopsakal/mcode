@@ -8,10 +8,10 @@ export ev=13.605698066
 alias grep='grep --color=auto'
 
 # -- PATHS
-export PATH=~/code/mBASH:$PATH
+export PATH=~/mcode/mBASH:$PATH
 
 # -- PYTHONPATHS
-# export PYTHONPATH=~/code:$PYTHONPATH
+export PYTHONPATH=~/mcode:$PYTHONPATH
 
 
 
@@ -24,6 +24,11 @@ lnc-170365 )
     export OMP_NUM_THREADS=6
 ;;
 
+
+
+matsci.dne.bnl.gov )
+    export OMP_NUM_THREADS=12
+;;
 
 esac
 
