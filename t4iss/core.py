@@ -93,8 +93,12 @@ class mXANES:
                 import xraydb
                 xdb = xraydb.xray_edge(element,edge)
                 self.edge_energy = xdb.energy
-            except:
+            except Exception as exc:
+                print(exc)
                 self.edge_energy = self.E0[0]
+        else:
+            self.edge_energy = edge_energy
+
 
         if eshift_to_edge:
             self.E0 = self.E0 - self.edge_energy
@@ -172,8 +176,9 @@ class mXANES:
             self.I = np.concatenate((self.I.T,y_patch), axis=0)
 
         f = interpolate.interp1d(self.E,self.I,kind='linear')
-        self.E = xshift+np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
+        self.E = np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
         self.I = yscale*f(self.E)
+        self.E = self.E + xshift
 
         if normalize_to is not None:
             if normalize_to == 'tail':
@@ -202,8 +207,9 @@ class mXANES:
             self.I = np.concatenate((self.I.T,y_patch), axis=0)
 
         f = interpolate.interp1d(self.E,self.I,kind='linear')
-        self.E = xshift+np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
+        self.E = np.linspace(iterprange[0],iterprange[1], int((iterprange[1]-iterprange[0])/stepsize)+1  )
         self.I = yscale*f(self.E)
+        self.E = self.E + xshift
 
         if normalize_to is not None:
             if normalize_to == 'tail':
