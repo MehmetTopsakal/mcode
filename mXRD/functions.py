@@ -1,17 +1,45 @@
-import pyFAI
-import fabio
+# import nslsii
+
+# # See docstring for nslsii.configure_base() for more details
+# nslsii.configure_base(get_ipython().user_ns,'xpdd', pbar=False, bec=True,
+#                       magics=True, mpl=True, epics_context=False, configure_logging=False)
+
+
+# # from databroker import catalog
+# # raw = catalog['xpdd']
+# from tiled.client import from_profile
+# raw = from_profile('xpdd')
+
+
 import numpy as np
-import os
-
-from pyFAI.gui import jupyter
-import tifffile
-
-import glob
-
-from scipy.ndimage import median_filter
 import xarray as xr
 
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import os
+import shutil
+import glob
+import datetime
+
+import copy 
+from copy import deepcopy
+
+import time
+from time import gmtime, localtime, strftime
+
+
+
+
+
+
+import numpy as np
+from pyFAI.gui import jupyter
+from scipy.ndimage import median_filter
+import xarray as xr
+import pyFAI
+import fabio
+import tifffile
+import os
+import glob
+
 
 import pymatgen as mg
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
@@ -19,6 +47,22 @@ from copy import deepcopy
 from pymatgen.core.lattice import Lattice
 from pymatgen.core.structure import Structure
 
+from matplotlib.gridspec import GridSpec
+import requests
+import PIL
+import io
+import pprint
+import tifffile
+
+
+import matplotlib.pyplot as plt
+plt.rcParams.update({'figure.max_open_warning': 0})
+
+
+
+from tqdm.notebook import trange, tqdm
+import imageio
+from matplotlib.gridspec import GridSpec
 
 
 #from https://github.com/scikit-beam/scikit-beam/blob/master/skbeam/core/utils.py
@@ -69,16 +113,19 @@ def xrd_plotter(ax=None,
                 scale=1,
                 scale_a=1,
                 scale_b=1,
-                scale_c=1
+                scale_c=1,
+                export_cif_as=None,
+                stem=True,
+                stem_logscale=True
                 ):
 
     if mp_id is not None:
-        from pymatgen.ext.matproj import MPRester
-        mpr = MPRester('gI8Qmxe9AnkbTvNd')  ###
-        structure = mpr.get_structure_by_material_id(mp_id,final=final)
+        from mp_api.client import MPRester
+        mpr = MPRester('dHgNQRNYSpuizBPZYYab75iJNMJYCklB')  ###
+        structure = mpr.get_structure_by_material_id(mp_id,final=final)[0]
     elif structure is None:
         structure = Structure.from_file(str_file)
-
+    
     structure.lattice = Lattice.from_parameters(a=structure.lattice.abc[0]*scale*scale_a,
                                                 b=structure.lattice.abc[1]*scale*scale_b,
                                                 c=structure.lattice.abc[2]*scale*scale_c,
@@ -106,19 +153,23 @@ def xrd_plotter(ax=None,
         except:
             pass
 
-    #if normalize:
-        #Y = Y/max(Y)
-    #if stem_scale == 'sqrt':
-        #Y = np.sqrt(Y)
-    #if stem_scale == 'log':
-        #Y = np.log(Y)
-    #if stem:
-        #ax.stem(X,Y+bottom,bottom=bottom,
-                #markerfmt=color+marker,basefmt=color,linefmt=color)
-
-    #ax.axhline(y=bottom,xmin=radial_range[0]+0.1,color=color)
-
     ax.text(label_x,label_y,label,color=color,transform=ax.transAxes)
+
+    if stem:
+        ax_stem = ax.twinx()
+        if stem_logscale:
+            markerline, stemlines, baseline = ax_stem.stem(X,np.log(Y),markerfmt=".")
+        else:
+            markerline, stemlines, baseline = ax_stem.stem(X,Y,markerfmt=".")
+        plt.setp(stemlines, linewidth=0.5, color=color)
+        plt.setp(markerline, color=color)
+        ax_stem.set_ylim(bottom=0)
+        ax_stem.set_yticks([])
+
+    if export_cif_as is not None:
+        structure.to(fmt='cif',filename=export_cif_as)
+
+
 
 
 
@@ -133,7 +184,7 @@ def integrator(img,
                radial_range=(1,10), # integration range
                unit="q_A^-1",  # integration unit. For two-theta-vs-intensity plot, change to 2th_deg
                figsize=None, # user provided figure size
-               dpi=96, # dpi for exporting figures
+               dpi=128, # dpi for exporting figures
                jupyter_style_i2dplot=False, # change to true for using pyFAI.gui
                robust=True, # xarray robust feature
                cmap="inferno", # color map
@@ -144,7 +195,7 @@ def integrator(img,
                plot_i2d=True,
                ylogscale=True,
                xlogscale=True,
-               bottom=None, # bottom value of 1d plot
+               bottom=1, # bottom value of 1d plot
                top=None, # top value of 1d plot
                title=None, # user provided title for the figure
                final=False, #if True, structures pulled from Materials Project will be calculated values (CONTCAR). Otherwise, initial POSCAR .
@@ -153,7 +204,9 @@ def integrator(img,
                phases = None, # phases for peak indexing.
                export_i1d_as=None, # filename for exporting 1d plot
                export_i1d_mode='xy', # for two-theta-vs-intensity use xy, for dspacing-vs-intensity use d here.
-               export_fig_as=None
+               export_fig_as=None,
+               axvspan=None,
+               close_fig = True
                ):
 
 
@@ -225,26 +278,30 @@ def integrator(img,
     elif (plot_img and plot_i1d and not plot_i2d):
         if figsize is None:
             fig = plt.figure(figsize=(10,5),dpi=dpi)
+        fig = plt.figure(figsize=figsize,dpi=dpi)
         ax_img = fig.add_subplot(1,2,1)
         ax_i1d = fig.add_subplot(1,2,2)
         ax_i2d = None
     elif plot_i1d and plot_i2d and not plot_img:
         if figsize is None:
-            fig = plt.figure(figsize=(8,6),dpi=dpi)
+            fig = plt.figure(figsize=(16,8),dpi=dpi)
+        fig = plt.figure(figsize=figsize,dpi=dpi)
         ax_i2d = fig.add_subplot(2,1,1)
         ax_i1d = fig.add_subplot(2,1,2,sharex=ax_i2d)
         ax_img = None
         ax_i2d.set_title(title)
     elif plot_i1d and not plot_i2d and not plot_img:
         if figsize is None:
-            fig = plt.figure(figsize=(8,6),dpi=dpi)
+            fig = plt.figure(figsize=(16,8),dpi=dpi)
+        fig = plt.figure(figsize=figsize,dpi=dpi)
         ax_i1d = fig.add_subplot(1,1,1)
         ax_i2d = None
         ax_img = None
         ax_i1d.set_title(title)
     elif plot_i2d and not plot_i1d and not plot_img:
         if figsize is None:
-            fig = plt.figure(figsize=(8,6),dpi=dpi)
+            fig = plt.figure(figsize=(16,8),dpi=dpi)
+        fig = plt.figure(figsize=figsize,dpi=dpi)
         ax_i2d = fig.add_subplot(1,1,1)
         ax_i1d = None
         ax_img = None
@@ -252,6 +309,7 @@ def integrator(img,
     elif plot_img and not plot_i1d and not plot_i2d:
         if figsize is None:
             fig = plt.figure(figsize=(6,8),dpi=dpi)
+        fig = plt.figure(figsize=figsize,dpi=dpi)
         ax_img = fig.add_subplot(1,1,1)
         ax_i1d = None
         ax_i2d = None
@@ -281,17 +339,9 @@ def integrator(img,
             ax_img.set_title(title)
 
 
-
     if plot_i2d:
         i2d_m = ai.integrate2d(img, npt_rad=npt, npt_azim=npt_azim, mask=mask, method=method,
                                    unit=unit, radial_range=radial_range)
-        if title is None:
-            if median_filter_size > 1:
-                ax_i2d.set_title('(Median_filtered 2D image)')
-            else:
-                ax_i2d.set_title('(2D image)')
-        else:
-            pass
 
         if jupyter_style_i2dplot:
             jupyter.plot2d(i2d_m,ax=ax_i2d)
@@ -311,10 +361,10 @@ def integrator(img,
         ax_i2d.set_xlim(radial_range)
         ax_i2d.set_xlabel(None)
 
-        if median_filter_size > 1:
-            ax_i2d.set_title('(Median_filtered, masked and regrouped)')
-        else:
-            ax_i2d.set_title('(Masked and regrouped)')
+        # if median_filter_size > 1:
+        #     ax_i2d.set_title('(Median_filtered, masked and regrouped)')
+        # else:
+            # ax_i2d.set_title('(Masked and regrouped)')
 
         if ROIs is not None:
             for e,r in enumerate(ROIs):
@@ -324,21 +374,61 @@ def integrator(img,
                 ax_i2d.add_patch(rect)
                 ax_i2d.text(radial_range[1],r[0],' ROI-%d'%e,color='C%d'%e)
 
-        ax_i2d.set_xscale('log')
-
+        if xlogscale:
+            ax_i2d.set_xscale('log')
 
 
     if plot_i1d:
 
         if phases is not None:
             for e,p in enumerate(phases):
+                
+                try:
+                    scale_a = p['scale_a']
+                except:
+                    scale_a = 1.00
+                try:
+                    scale_b = p['scale_b']
+                except:
+                    scale_b = 1.00                    
+                try:
+                    scale_c = p['scale_c']
+                except:
+                    scale_c = 1.00
+                try:
+                    export_cif_as = p['export_cif_as']
+                except:
+                    export_cif_as = None
+                try:
+                    stem = p['stem']
+                    if stem.lower() == "true":
+                        stem = True
+                    elif stem.lower() == "false":
+                        stem = False
+                except:
+                    stem = True
+                try:
+                    stem_logscale = p['stem_logscale']
+                    if stem_logscale.lower() == "true":
+                        stem_logscale = True
+                    elif stem_logscale.lower() == "false":
+                        stem_logscale = False
+                except:
+                    stem_logscale = True
+
+
                 xrd_plotter(ax=ax_i1d,ax2=ax_i2d,
                             mp_id=p['mpid'],final=final,
                             str_file=p['cif'],label=p['label'],
-                            scale=p['scale'],
+                            scale=p['scale'],scale_a=scale_a,scale_b=scale_b,scale_c=scale_c,
                             marker='.',color='C%d'%(e+2),label_x=1.02,label_y=e*0.1,
-                            unit=unit, radial_range=radial_range,wl=ai.wavelength*10e9,bottom=bottom)
+                            unit=unit, radial_range=radial_range,wl=ai.wavelength*10e9,bottom=bottom,
+                            export_cif_as=export_cif_as,
+                            stem=stem, stem_logscale=stem_logscale)
 
+        if axvspan is not None:
+            for a in axvspan:
+                ax_i1d.axvspan(a[0], a[1], alpha=0.2, color='red', edgecolor=None)
 
         jupyter.plot1d(i1d_m,ax=ax_i1d)
 
@@ -449,5 +539,32 @@ def integrator(img,
                'export_i1d_as':export_i1d_as,
                'export_i1d_mode':export_i1d_mode,
                }
+    
+    if close_fig:
+        plt.close(fig)
 
     return ds
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
