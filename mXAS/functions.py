@@ -484,3 +484,368 @@ def normalize_and_flatten(da_in,e0=None,pre1=None,pre2=None,
     return ds
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def read_files(pattern,
+               mode=['ISS'],
+               exclude_these=[],
+               plot=True,
+               labels_str=None,
+               plot_channels=True,
+               sdd=False,
+               sdd_cols=[9,9+4,9+4+4,9+4+4+4],
+               ave_method = 'mean',
+               get_ds=True):
+
+    """
+    This function searches files in a directory and sorts by experiment start time
+    """
+
+    reads = []
+
+
+    fl = sorted(glob.glob(pattern))
+
+    for e,f in enumerate(fl):
+
+        try:
+
+            # read file
+            d = np.loadtxt(f,unpack=True)
+
+            if mode[0] == 'ISS':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime('%s_%s'%(l.split()[2],l.split()[3][:8]),
+                                                "%m/%d/%Y_%H:%M:%S")
+            if mode[0] == 'ISS_old':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime('%s_%s'%(l.split()[3],l.split()[4][:8]),
+                                                "%m/%d/%Y_%H:%M:%S")
+            elif mode[0] == 'ISS_2021_3':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime('%s_%s'%(l.split()[2],l.split()[3][:8]),
+                                                "%m/%d/%Y_%H:%M:%S")
+            elif mode[0] == 'QAS':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime('%s_%s'%(l.split()[3],l.split()[4]),
+                                                "%m/%d/%Y_%H:%M:%S")
+            elif mode[0] == 'BMM':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime(l,"# Scan.start_time: %Y-%m-%dT%H:%M:%S\n")
+            elif mode[0] == '12BM':
+                l = linecache.getline(f, mode[1])
+                dt = datetime.datetime.strptime(l,"#D %a %b %d %H:%M:%S %Y \n")
+            elif mode[0] == '20ID':
+                l = linecache.getline(f, mode[1]).split()
+                dt = datetime.datetime.strptime('%s_%s_%s'%(l[9],l[10],l[11][0:2]),
+                                                "%m/%d/%Y_%I:%M:%S_%p")
+
+
+            reads.append([dt.timestamp(),dt.isoformat(),f,d])
+
+        except Exception as exc:
+            print(exc)
+            print('Unable to read %s'%(f))
+
+
+    # sort by timestamp
+    reads.sort(key=lambda x: x[0])
+
+    reads = [i for j, i in enumerate(reads) if j not in exclude_these]
+
+
+
+
+
+
+
+    if labels_str is None:
+
+        # figure out columns label from first file
+        f0 = open(reads[0][2],'r')
+        for e,line in enumerate(f0):
+            if line.startswith('#'):
+                last_comment_line = e
+        col_labels_line = linecache.getline(reads[0][2], last_comment_line+1).replace("#","")
+        col_labels = col_labels_line.split()
+
+    else:
+        col_labels = labels_str.replace("#","").split()
+
+
+    col_energy = col_labels.index('energy')
+    col_i0     = col_labels.index('i0')
+    col_it     = col_labels.index('it')
+    col_ir     = col_labels.index('ir')
+    col_if     = col_labels.index('iff')
+
+
+
+    if plot:
+
+
+
+
+        if plot_channels:
+            fig = plt.figure(figsize=(12,6),dpi=128)
+
+
+            ax = fig.add_subplot(2,4,1)
+            for i in reads:
+                ax.plot(i[3][col_energy],i[3][col_i0])
+            # ax.set_xlabel('Energy, eV')
+            ax.set_ylabel('I$_0$')
+
+            ax = fig.add_subplot(2,4,2)
+            for i in reads:
+                ax.plot(i[3][col_energy],i[3][col_it])
+            # ax.set_xlabel('Energy, eV')
+            ax.set_ylabel('I$_t$')
+
+            ax = fig.add_subplot(2,4,5)
+            for i in reads:
+                ax.plot(i[3][col_energy],i[3][col_ir])
+            ax.set_xlabel('Energy, eV')
+            ax.set_ylabel('I$_r$')
+
+            ax = fig.add_subplot(2,4,6)
+
+            if sdd:
+                for i in reads:
+                    ax.plot(i[3][col_energy],i[3][sdd_cols[0]]+i[3][sdd_cols[1]]+i[3][sdd_cols[2]]+i[3][sdd_cols[3]])
+                ax.set_ylabel('I$_{ff}$ (SDD)')
+            else:
+                for i in reads:
+                    ax.plot(i[3][col_energy],i[3][col_if])
+                ax.set_ylabel('I$_{ff}$')
+            ax.set_xlabel('Energy, eV')
+
+
+
+            ax = fig.add_subplot(1,4,3)
+            for e,i in enumerate(reads):
+                ax.plot(i[3][col_energy],i[3][col_i0],color='r')
+                ax.plot(i[3][col_energy],i[3][col_it],color='g')
+                ax.plot(i[3][col_energy],i[3][col_ir],color='b')
+            ax.set_xlabel('Energy, eV')
+
+
+            ax = fig.add_subplot(1,4,4)
+            ax.axis('off')
+            dy = 1/len(reads)
+            for e,i in enumerate(reads):
+                ax.text(0,e*dy,'%s [%d,%.2f,%.2f]'%(i[2][-30:],e,i[3][0][0], i[3][0][-1]),color='C%d'%(e%10),transform=ax.transAxes,fontsize=6)
+
+
+
+            plt.tight_layout()
+
+
+        fig = plt.figure(figsize=(12,4),dpi=128)
+
+
+        ax = fig.add_subplot(1,4,1)
+        for i in reads:
+            ax.plot(i[3][col_energy],-np.log(i[3][col_it]/i[3][col_i0]))
+        # ax.set_ylabel('$\mu_{transmission}$')
+        ax.set_xlabel('Energy, eV')
+        ax.set_title('Transmission')
+
+        ax = fig.add_subplot(1,4,2)
+        for i in reads:
+            ax.plot(i[3][col_energy],-np.log(i[3][col_ir]/i[3][col_it]))
+        # ax.set_ylabel('$\mu_{reference}$')
+        ax.set_xlabel('Energy, eV')
+        ax.set_title('Reference')
+
+        ax = fig.add_subplot(1,4,3)
+        if sdd:
+            for i in reads:
+                ax.plot(i[3][col_energy],( -(i[3][sdd_cols[0]]+i[3][sdd_cols[1]]+i[3][sdd_cols[2]]+i[3][sdd_cols[3]]) /i[3][col_i0]))
+        else:
+            for i in reads:
+                ax.plot(i[3][col_energy],(i[3][col_if]/i[3][col_i0]))
+        ax.set_xlabel('Energy, eV')
+        # ax.set_ylabel('$\mu_{fluorescence}$')
+        ax.set_title('Fluorescence')
+
+
+        ax = fig.add_subplot(1,4,4)
+        ax.axis('off')
+        dy = 1/len(reads)
+        for e,i in enumerate(reads):
+            ax.text(0,e*dy,'%s [%d,%.2f,%.2f]'%(i[2][-30:],e,i[3][0][0], i[3][0][-1]),color='C%d'%(e%10),transform=ax.transAxes,fontsize=6)
+
+
+        plt.tight_layout()
+
+
+
+    if get_ds:
+
+        if ave_method.lower() == 'mean':
+            E = np.array([ i[3][col_energy] for i in reads  ]).mean(axis=0)
+            mu_trans = np.array([ -np.log(i[3][col_it]/i[3][col_i0]) for i in reads  ]).mean(axis=0)
+            mu_ref   = np.array([ -np.log(i[3][col_ir]/i[3][col_it]) for i in reads  ]).mean(axis=0)
+            if sdd:
+                mu_fluo = np.array([ (-(i[3][sdd_cols[0]]+i[3][sdd_cols[1]]+i[3][sdd_cols[2]]+i[3][sdd_cols[3]]) /i[3][col_i0]) for i in reads ]).mean(axis=0)
+            else:
+                mu_fluo = np.array([ (i[3][col_if]/i[3][col_i0]) for i in reads ]).mean(axis=0)
+        elif ave_method.lower() == 'median':
+            E = np.median(np.array([ i[3][col_energy] for i in reads  ]),axis=0)
+            mu_trans = np.median(np.array([ -np.log(i[3][col_it]/i[3][col_i0]) for i in reads  ]),axis=0)
+            mu_ref   = np.median(np.array([ -np.log(i[3][col_ir]/i[3][col_it]) for i in reads  ]),axis=0)
+            if sdd:
+                mu_fluo = np.median(np.array([ (-(i[3][sdd_cols[0]]+i[3][sdd_cols[1]]+i[3][sdd_cols[2]]+i[3][sdd_cols[3]]) /i[3][col_i0]) for i in reads ]),axis=0)
+            else:
+                mu_fluo = np.median(np.array([ (i[3][col_if]/i[3][col_i0]) for i in reads ]),axis=0)
+
+        ds = xr.Dataset()
+        ds['mu_trans'] = xr.DataArray(data=mu_trans,coords=[E],dims=['energy'])
+        ds['mu_ref'] = xr.DataArray(data=mu_ref,coords=[E],dims=['energy'])
+        ds['mu_fluo'] = xr.DataArray(data=mu_fluo,coords=[E],dims=['energy'])
+        ds.attrs['files'] = [i[2] for i in reads]
+        ds.attrs['ave_method'] = ave_method
+        ds.attrs['mode'] = mode
+        ds.attrs['sdd'] = str(sdd)
+
+        return ds
+
+    else:
+        return reads
+
+
+
+def process_ds(
+    ds_in,
+    e0   = None,
+    e0_from = 'ref',
+    element = 'Ni',
+    edge = 'K',
+    pre1 = None,
+    pre2 = None,
+    norm1= None,
+    norm2= None,
+    nvict= 2,
+
+    rbkg = 1.0,
+    kweight = 1,
+    kmin = 2,
+    kmax = 10,
+    dk = 0.1,
+    window = 'hanning',
+
+    ):
+
+
+    if e0 is None:
+        if e0_from == 'ref':
+            e0 = find_e0(ds_in['mu_ref'].energy.values,ds_in['mu_ref'].values)
+        elif e0_from == 'xraydb':
+            import xraydb
+            xraydb.xray_edge(element, edge).energy
+    # pre_edge and normalization parameters
+    if pre1 is None:
+        pre1 = -round(e0 - ds_in['mu_ref'].energy.values[1])
+    if pre2 is None:
+        pre2 = round(pre1/3)
+    if norm2 is None:
+        norm2 = round(ds_in['mu_ref'].energy.values[-2] - e0)
+    if norm1 is None:
+        norm1 = round(norm2/3)
+
+
+    try:
+        group_ref = Group(energy=ds_in['mu_ref'].energy.values, mu=ds_in['mu_ref'].values, filename=None)
+        pre_edge(group_ref, e0=e0, pre1=pre1, pre2=pre2, norm1=norm1, norm2=norm2, nvict=nvict, group=group_ref)
+        autobk(group_ref, rbkg=rbkg, kweight=kweight)
+        xftf(group_ref, kmin=kmin, kmax=kmax, dk=dk, kwindow=window)
+    except Exception as exc:
+        print(exc)
+        group_ref = None
+    try:
+        group_trans = Group(energy=ds_in['mu_trans'].energy.values, mu=ds_in['mu_trans'].values, filename=None)
+        pre_edge(group_trans, e0=e0, pre1=pre1, pre2=pre2, norm1=norm1, norm2=norm2, nvict=nvict, group=group_trans)
+        autobk(group_trans, rbkg=rbkg, kweight=kweight)
+        xftf(group_trans, kmin=kmin, kmax=kmax, dk=dk, kwindow=window)
+    except Exception as exc:
+        print(exc)
+        group_trans = None
+    try:
+        group_fluo = Group(energy=ds_in['mu_fluo'].energy.values, mu=ds_in['mu_fluo'].values, filename=None)
+        pre_edge(group_fluo, e0=e0, pre1=pre1, pre2=pre2, norm1=norm1, norm2=norm2, nvict=nvict, group=group_fluo)
+        autobk(group_fluo, rbkg=rbkg, kweight=kweight)
+        xftf(group_fluo, kmin=kmin, kmax=kmax, dk=dk, kwindow=window)
+    except Exception as exc:
+        print(exc)
+        group_fluo = None
+
+
+    for g in [[group_ref,'Reference'],[group_trans,'Transmission'],[group_fluo,'Fluorosence']]:
+        if g[0] is not None:
+            fig = plt.figure(figsize=(10,5),dpi=128)
+
+            ax = fig.add_subplot(1,2,1)
+            ax.plot(g[0].energy,g[0].flat,color='k',lw=2)
+            ax.set_title(g[1])
+            ax.set_ylabel('$\mu(E)$')
+            ax.set_xlabel('Energy, eV')
+
+            ax_in = fig.add_axes([0.25, 0.18, 0.2, 0.35])
+            ax_in.plot(g[0].energy,g[0].mu,color='k',lw=1)
+            ax_in.plot(g[0].energy,g[0].pre_edge,lw=0.5)
+            ax_in.plot(g[0].energy,g[0].post_edge,lw=0.5)
+
+            ax = fig.add_subplot(1,2,2)
+            ax.plot(g[0].r, g[0].chir_mag,'-r',lw=2)
+
+            ax.set_xlim([0,7])
+            ax.set_xlabel('$\it{R}$ ($\AA$)')
+            ax.set_ylabel('|$\chi$ ($\it{R}$)| ($\AA^{-3}$)')
+            ax.set_title('rbkg=%.2f, kmin=%.2f, kmax=%.2f \nkweight=%.2f, dk=%.2f, kwindow=%s'%(rbkg, kmin, kmax, kweight, dk, window),fontsize=9)
+
+            ax = fig.add_axes([0.77, 0.60, 0.2, 0.3])
+            ax.plot(g[0].k, g[0].k*g[0].k*g[0].chi,'-r')
+            ax.axvline(x=kmin,linestyle=':',color='k')
+            ax.axvline(x=kmax,linestyle=':',color='k')
+            ax.set_xlabel('$\it{k}$ ($\AA^{-1}$)')
+            ax.set_ylabel('$\it{k^{2}}$ $\chi$ ($\it{k}$) ($\AA^{-2}$)')
+
+            plt.gca().spines['top'].set_visible(False)
+            plt.gca().spines['right'].set_visible(False)
+
+            plt.tight_layout()
+
+
+
+
+    return [group_ref,group_trans,group_fluo]
+
+
+
+
+
+
+
+
+
+

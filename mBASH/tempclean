@@ -13,14 +13,12 @@ mkdir old
 mv $list old
 
 
-mkdir ~/temp/1  2> /dev/null
-mkdir ~/temp/2  2> /dev/null
-mkdir ~/temp/3  2> /dev/null
-mkdir ~/temp/4  2> /dev/null
-mkdir ~/temp/5  2> /dev/null
-mkdir ~/temp/6  2> /dev/null
-mkdir ~/temp/7  2> /dev/null
-mkdir ~/temp/8  2> /dev/null
-mkdir ~/temp/9  2> /dev/null
+mkdir ~/temp/1_Mo  2> /dev/null
+mkdir ~/temp/2_Tu  2> /dev/null
+mkdir ~/temp/3_Wd  2> /dev/null
+mkdir ~/temp/4_Th  2> /dev/null
+mkdir ~/temp/5_Fr  2> /dev/null
+mkdir ~/temp/6_Sa  2> /dev/null
+mkdir ~/temp/7_Su  2> /dev/null
 
 
