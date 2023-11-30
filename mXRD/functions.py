@@ -317,13 +317,15 @@ def integrator(img,
 
 
     if plot_img:
+
         da_img = xr.DataArray(data=img,dims=['pixel_y','pixel_x'])
         ds['img'] = da_img
 
         if jupyter_style_i2dplot:
             jupyter.display(img,ax=ax_img)
             if mask is not None:
-                ax_img.imshow(mask,alpha=0.3,cmap='Greys')
+                dam = da_mask
+                da_mask.where(dam>0).plot.imshow(ax=ax_img,robust=False,alpha=0.9,cmap='Greys',add_colorbar=False)
             ax_img.set_xlabel('pixel_x')
             ax_img.set_ylabel('pixel_y')
         else:
@@ -333,9 +335,13 @@ def integrator(img,
                         add_colorbar=True,
                         cbar_kwargs=dict(orientation='vertical',
                         pad=0.02, shrink=0.5, label=None))
-            ax_img.set_aspect('equal')
+
             if mask is not None:
-                ax_img.imshow(mask,alpha=0.3,cmap='Greys')
+                dam = da_mask
+                da_mask.where(dam>0).plot.imshow(ax=ax_img,robust=False,alpha=0.9,cmap='Greys',add_colorbar=False)
+
+            ax_img.set_aspect('equal')
+
             ax_img.set_title(title)
 
 
