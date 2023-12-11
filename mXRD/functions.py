@@ -104,8 +104,8 @@ def xrd_plotter(ax=None,
                 label=None,
                 marker='o',
                 color='C0',
-                label_x=1.02,
-                label_y=0,
+                label_x=0.9,
+                label_y=0.9,
                 unit='q_A^-1',
                 radial_range=(1,10),
                 bottom=-0.2,
@@ -412,7 +412,7 @@ def integrator(img,
                     elif stem.lower() == "false":
                         stem = False
                 except:
-                    stem = True
+                    stem = False
                 try:
                     stem_logscale = p['stem_logscale']
                     if stem_logscale.lower() == "true":
@@ -427,7 +427,7 @@ def integrator(img,
                             mp_id=p['mpid'],final=final,
                             str_file=p['cif'],label=p['label'],
                             scale=p['scale'],scale_a=scale_a,scale_b=scale_b,scale_c=scale_c,
-                            marker='.',color='C%d'%(e+2),label_x=1.02,label_y=e*0.1,
+                            marker='.',color='C%d'%(e+2),label_x=0.02,label_y=0.9-e*0.1,
                             unit=unit, radial_range=radial_range,wl=ai.wavelength*10e9,bottom=bottom,
                             export_cif_as=export_cif_as,
                             stem=stem, stem_logscale=stem_logscale)
