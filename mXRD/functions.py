@@ -149,7 +149,7 @@ def xrd_plotter(ax=None,
     for i in X:
         ax.axvline(x=i,lw=0.6,color=color)
         try:
-            ax2.axvline(x=i,lw=0.2,color=color)
+            ax2.axvline(x=i,lw=0.5,color=color)
         except:
             pass
 
@@ -174,8 +174,10 @@ def xrd_plotter(ax=None,
 
 
 def integrator(img,
-               ai, #pyFAI azimuthal inegrator object
-               mask, #mask
+               ai=None, #pyFAI azimuthal inegrator object
+               mask=None, #mask
+               poni_file=None,
+               mask_file=None,
                flip_mask=False, #sometimes we may need to flip mask
                median_filter_size=-1, #if >1, we apply median filter on raw 2D image to get rid of bad pixels
                npt=4000, # number of radial points
@@ -209,6 +211,11 @@ def integrator(img,
                close_fig = True
                ):
 
+    if poni_file is not None:
+        ai = pyFAI.load(poni_file)
+
+    if mask_file is not None:
+        mask = fabio.open(mask_file).data
 
     if flip_mask:
         mask = np.flipud(mask)
