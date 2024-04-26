@@ -19,7 +19,7 @@ import shutil
 import glob
 import datetime
 
-import copy 
+import copy
 from copy import deepcopy
 
 import time
@@ -125,7 +125,7 @@ def xrd_plotter(ax=None,
         structure = mpr.get_structure_by_material_id(mp_id,final=final)[0]
     elif structure is None:
         structure = Structure.from_file(str_file)
-    
+
     structure.lattice = Lattice.from_parameters(a=structure.lattice.abc[0]*scale*scale_a,
                                                 b=structure.lattice.abc[1]*scale*scale_b,
                                                 c=structure.lattice.abc[2]*scale*scale_c,
@@ -363,7 +363,7 @@ def integrator(img,
                                  coords=[i2d_m.azimuthal,i2d_m.radial],
                                  dims=['azimuthal','radial'],
                                  attrs={'unit':i2d_m.unit,
-                                        'xlabel':i2d_m.unit.label,
+                                        #'xlabel':i2d_m.unit.label,
                                         'ylabel':r"Azimuthal angle $\chi$ ($^{o}$)"})
             ds['i2d'] = da_2d
             ds['i2d'].plot.imshow(ax=ax_i2d,robust=robust,cmap=cmap,vmin=vmin,vmax=vmax,
@@ -395,7 +395,7 @@ def integrator(img,
 
         if phases is not None:
             for e,p in enumerate(phases):
-                
+
                 try:
                     scale_a = p['scale_a']
                 except:
@@ -403,7 +403,7 @@ def integrator(img,
                 try:
                     scale_b = p['scale_b']
                 except:
-                    scale_b = 1.00                    
+                    scale_b = 1.00
                 try:
                     scale_c = p['scale_c']
                 except:
@@ -552,32 +552,8 @@ def integrator(img,
                'export_i1d_as':export_i1d_as,
                'export_i1d_mode':export_i1d_mode,
                }
-    
+
     if close_fig:
         plt.close(fig)
 
     return ds
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
